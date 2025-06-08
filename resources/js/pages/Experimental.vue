@@ -68,7 +68,7 @@ function fill_fields(data: any) {
                     <Column field="col3" header="Name" >
                         <template #body="{ data }">
                             <div v-if="data.col2 && (data.col2 == 'image')" class="flex items-center gap-2">
-                                <img :src="data.col3"></img>
+                                <img :src="data.col3"/>
                             </div>
                             <div v-else>{{ data.col3 }}</div>
                         </template>
