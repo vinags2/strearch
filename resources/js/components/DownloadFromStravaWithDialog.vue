@@ -33,7 +33,7 @@ const showAlert = ref(false)
 const textForAlertDescription = ref('Please wait while the informaton from Strava is being downloaded')
 const textForAlertHeader = ref('Downloading ' + whatToDownload.value + ' information')
 
-watch(strava_data, (newValue, oldValue) => {
+watch(strava_data, (newValue) => {
     if (newValue.code == 3 || newValue.code ==  4) {
         showSuccessBeforeClosing(false)
     } else if (newValue.code == 6 || newValue.code == 10) {

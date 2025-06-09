@@ -8,10 +8,7 @@ import { strearch_data } from '@/functions/Flags.js'
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
-const props = defineProps({
-});
-
-watch(strearch_data, (newValue, oldValue) => {
+watch(strearch_data, (newValue) => {
     if (newValue.code == 10) {
         fill_fields(newValue.data)
     }

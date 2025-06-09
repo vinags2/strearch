@@ -27,7 +27,7 @@ import { Binoculars, CircleX, Save, Check, TestTubes } from 'lucide-vue-next';
 
 import DownloadFromStravaWithDialog from '@/components/DownloadFromStravaWithDialog.vue';
 
-watch(strearch_data, (newValue, oldValue) => {
+watch(strearch_data, (newValue) => {
     if (newValue.code == 12) {
         fill_tableData(newValue.data)
     } else if (newValue.code == 14) {
@@ -37,7 +37,7 @@ watch(strearch_data, (newValue, oldValue) => {
 
 const activeFilter = ref<any>()
 
-watch(activeFilter, (newValue, oldValue) => {
+watch(activeFilter, (newValue) => {
     filterName.value = newValue?.name ?? 'a new filter name'
     warningVisible.value = newValue ? true : false
 })

@@ -31,4 +31,4 @@ export const strava_data = ref({code:0, data:['no data']})
 export const strearch_data = ref({code:0, data:'no data'})
 
 // (do not) show debug messages
-export var debug = false
+export let debug = true

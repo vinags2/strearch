@@ -108,7 +108,7 @@ export function getStravaData(downloadWhat: string, parameters = '') {
             if (downloadWhat == 'athlete') {
                 getAthleteData()
             } else {
-                getActivitiesData(true)
+                getActivitiesData(downloadWhat == 'All Activities')
             }
         } catch (error) {
             if ( debug ) {

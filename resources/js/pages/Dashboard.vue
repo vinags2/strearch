@@ -25,7 +25,6 @@ const props = defineProps({
     },
     quote: {
         type: Object,
-        default: {message: 'no quote found', author: 'no author'}
     }
 });
 
