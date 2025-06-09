@@ -28,7 +28,7 @@ const props = defineProps({
     }
 });
 
-watch(strearch_data, (newValue, oldValue) => {
+watch(strearch_data, (newValue) => {
     if (newValue.code == 8) {
         fill_tableData(newValue.data)
     }
