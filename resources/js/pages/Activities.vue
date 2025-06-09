@@ -370,7 +370,7 @@ function convertAPIdatatoJStypes() {
     })
 }
 
-function filterNameExists(event:any) {
+function filterNameExists() {
     warningVisible.value = false
     allFilters.value.forEach((element:any) => {
         if (element.name == filterName.value) {
