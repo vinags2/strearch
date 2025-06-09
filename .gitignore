@@ -22,3 +22,13 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+backup/Activities copy.vue
+backup/Activities.vue
+backup/Athlete.vue
+backup/Dashboard.vue
+backup/DownloadFromStrava.vue
+backup/DownloadFromStravaWithDialog -- v2.vue
+backup/Experimental.vue
+backup/Welcome.vue
+from V1/Activities.vue
+from V1/StravaAPI.js

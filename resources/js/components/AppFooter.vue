@@ -17,7 +17,7 @@ const props = defineProps({
     },
     quote: {
         type: Object,
-        default: {message: 'no quote found', author: 'no author'}
+        // default: {message: 'no quote found', author: 'no author'}
     }
 })
 </script>
@@ -25,7 +25,7 @@ const props = defineProps({
     <footer>
         <div class="text-[#706f6c] dark:text-[#A1A09A] text-xs">
             <div v-if="props.quote.message != 'no quote found'" class="flex justify-center py-2">
-                {{ quote.message }} ({{ quote.author }})
+                {{ quote?.message }} ({{ quote?.author }})
             </div>
             <div class="flex justify-evenly">
             <div v-if="props.appVersion != '0' || props.laravelVersion != '0' || props.phpVersion != '0'" class="font-semibold tracking-tight">Software versions:</div>
