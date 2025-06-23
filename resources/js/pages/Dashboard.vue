@@ -1,12 +1,17 @@
 <script setup lang="ts">
+
 import AppLayout from '@/layouts/AppLayout.vue';
 import AppFooter from '@/components/AppFooter.vue';
+
 import { Head } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
+
 import { getStats } from '@/functions/StrearchAPI.js'
 import { strearch_data } from '@/functions/Flags.js'
+
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+
 import DownloadFromStravaWithDialog from '@/components/DownloadFromStravaWithDialog.vue';
 
 
@@ -35,17 +40,12 @@ watch(strearch_data, (newValue) => {
 }) 
 
 const tableData = ref<any>([])
+const loading = ref(true);
 
-onMounted(() => {
-    get_stats()
-})
-
-// function convert2LocaleString(dateToConvert: any) {
-//     const dj = new Date(dateToConvert)
-//     return dj.toLocaleString()
-// }
+onMounted(() => { get_stats() })
 
 function get_stats() {
+    loading.value = true;
     getStats()
 }
 
@@ -133,6 +133,7 @@ function fill_tableData(data:any) {
 
     tableData.value.push({col1: 'Filters', col2:'bold', col3: ''})
     tableData.value.push({col1: 'Number of filters created', col2:'', col3: data.numberOfFilters})
+    loading.value = false;
 }
 
 </script>
@@ -145,7 +146,7 @@ function fill_tableData(data:any) {
             <div class="px-8 py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
                 <p class="md:px-32 py-4 w-full text-xl font-semibold tracking-tight">Statistics</p>
 
-                <DataTable :value="tableData" size="small" stripedRows style="width: 50%"
+                <DataTable :value="tableData" :loading="loading" size="small" stripedRows style="width: 50%"
                     :pt="{
                         thead: { style: 'display: none' },
                     }"
@@ -160,6 +161,7 @@ function fill_tableData(data:any) {
                             </div>
                         </template>
                     </Column>
+
                     <Column field="col2" header="Download" >
                         <template #body="{ data }">
                             <div v-if="data.col2 && (data.col2 == 'athlete' || data.col2 == 'activities')" class="flex items-center gap-2">
@@ -167,6 +169,7 @@ function fill_tableData(data:any) {
                             </div>
                         </template>
                     </Column>
+
                     <Column field="col3" header="Name" >
                         <template #body="{ data }">
                             <div v-if="data.col2 && data.col2 == 'columns'" class="columns-3">

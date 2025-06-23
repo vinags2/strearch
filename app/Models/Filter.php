@@ -12,6 +12,8 @@ class Filter extends Model
 
     protected $guarded = [];
 
+    protected $hidden = ['created_at', 'type_of_name_search', 'updated_at', 'user_id'];
+
     // protected function casts(): array
     // {
     //     return [

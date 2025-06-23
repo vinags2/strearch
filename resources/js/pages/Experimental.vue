@@ -1,78 +1,56 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { onMounted, ref, watch } from 'vue';
-import DownloadFromStravaWithDialog from '@/components/DownloadFromStravaWithDialog.vue';
-import { getAthlete } from '@/functions/StrearchAPI.js'
-import { strearch_data } from '@/functions/Flags.js'
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 
-watch(strearch_data, (newValue) => {
-    if (newValue.code == 10) {
-        fill_fields(newValue.data)
-    }
-}) 
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
+import TabPanel from 'primevue/tabpanel';
 
-const tableData = ref<any>([])
 
-onMounted(() => {
-    get_athlete()
-})
-
-function get_athlete() {
-    getAthlete()
-}
-
-function fill_fields(data: any) {
-    tableData.value = []
-    tableData.value.push({col1: 'Current athlete', col2:'', col3: data.athlete.first_name + ' ' + data.athlete.last_name})
-    tableData.value.push({col1: 'Strava ID', col2:'', col3: data.athlete.id})
-    tableData.value.push({col1: 'Username', col2:'', col3: data.athlete.username})
-    tableData.value.push({col1: 'Bio', col2:'', col3: data.athlete.bio})
-    tableData.value.push({col1: 'Premium member', col2:'', col3: data.athlete.summit == 1})
-    tableData.value.push({col1: 'Member since', col2:'', col3: data.athlete.strava_created_at})
-    tableData.value.push({col1: 'Weight', col2:'', col3: data.athlete.weight + ' kg'})
-    tableData.value.push({col1: 'Profile picture', col2:'image', col3: data.athlete.profile_picture_large})
-    tableData.value.push({col1: 'Location', col2:'', col3: data.athlete.city + ' ' + data.athlete.state + ' ' + data.athlete.country})
-    tableData.value.push({col1: 'Date of last download', col2:'athlete', col3: data.date_of_last_athlete_strava_update})
-}
+import StatsTable from '@/components/my/StatsTable.vue';
+import ActivitiesTable from '@/components/my/ActivitiesTable.vue';
+import Filters from '@/components/my/Filters.vue';
 
 </script>
 
 <template>
-    <Head title="Athlete Details" />
+    <Head title="Activities" />
 
     <AppLayout>
-        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4  bg-gradient-to-r from-cyan-200 to-blue-300">
-            <div class="px-8 py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-                    <p class="md:px-32 py-8 w-full text-xl font-semibold tracking-tight">Athlete Details</p>
+        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl bg-gradient-to-r from-cyan-200 to-blue-300">
+            <div class="py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+                <div class="flex pb-8">
+                    <Filters></Filters>
+                </div>
+                    <Tabs value="0" unstyled >
+                        <TabList class="flex flex-row">
+                            <Tab value="0" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Activities</Tab>
+                            <Tab value="3" disabled>&nbsp;&nbsp;</Tab>
+                            <Tab value="1" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Statistics</Tab>
+                            <Tab value="3" disabled>&nbsp;&nbsp;</Tab>
+                            <Tab value="2" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Charts</Tab>
+                        </TabList>
+                        <TabPanels>
 
-                <DataTable :value="tableData" size="small" stripedRows style="width: 50%"
-                    :pt="{
-                        thead: { style: 'display: none' },
-                        bodyRow: { class: '!bg-cyan-100' },
-                    }"
-                >
-                    <Column field="col1" header="Code"></Column>
-                    <Column field="col2" header="Download">
-                        <template #body="{ data }">
-                            <div v-if="data.col2 && (data.col2 != 'image')" class="flex items-center gap-2">
-                            <DownloadFromStravaWithDialog @newdownload="get_athlete" :download-what="data.col2"></DownloadFromStravaWithDialog>
+                        <TabPanel value="0">
+              
+                            <ActivitiesTable></ActivitiesTable>
+                        </TabPanel>
+                        <TabPanel value="1">
+
+                            <div class="pt-4">
+                                <StatsTable></StatsTable>
                             </div>
-                        </template>
-                    </Column>
-                    <Column field="col3" header="Name" >
-                        <template #body="{ data }">
-                            <div v-if="data.col2 && (data.col2 == 'image')" class="flex items-center gap-2">
-                                <img :src="data.col3"/>
-                            </div>
-                            <div v-else>{{ data.col3 }}</div>
-                        </template>
-                    </Column>
-                </DataTable>
-
-
+                        </TabPanel>
+                        <TabPanel value="2">
+                            <div class="mt-8">Charts and Analyses will go here.</div>
+                        </TabPanel>
+                        </TabPanels>
+                    </Tabs>
+                </div>
+            <div>
             </div>
         </div>
     </AppLayout>

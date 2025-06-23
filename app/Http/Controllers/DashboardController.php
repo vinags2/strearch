@@ -20,16 +20,6 @@ class DashboardController extends Controller
      */
     public function index(): Response
     {
-        // dd(date_parse_from_format('j/n/Y', '22/5/2025 AEST'));
-        // dd(12 * 60 * 60, Setting::last_activities_update_from_strava(), date_parse_from_format('j/n/Y g:i:s a', Setting::last_activities_update_from_strava()), Setting::last_activities_update_from_strava_as_unix_timestamp());
-        // $thisandthat = activity::selectRaw('count(*) as c, sum(distance)/1000 as d')->first();
-
-        // $thisYearActivities = activity::selectRaw("strftime('%Y', 'now') - 1, count(*) as c, sum(distance)/1000 as d, avg(distance)/1000 as a, sum(total_elevation_gain) as e")
-        //     ->whereRaw("strftime('%Y', start_date_local) = strftime('%Y', 'now')")
-        //     ->first();
-        // $thisYearActivities = activity::selectRaw("strftime('%Y', start_date_local)")->first();
-        // dd($thisYearActivities);
-
         return Inertia::render('Dashboard', [
             'laravelVersion' => app()->version(),
             'phpVersion' => phpversion(),

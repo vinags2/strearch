@@ -17,6 +17,14 @@ class Activity extends Model
 
     protected $appends = ['moving_time_as_string', 'start_date_local_as_timestamp'];
 
+    protected $hidden = ['resource_state', 'user_id', 'athlete_id', 'athlete_resource_state', 'elapsed_time', 'type',
+        'workout_type', 'start_date', 'timezone', 'UTC_offset', 'location_city', 'location_state', 'location_country', 'achievement_count',
+        'kudos_count', 'comment_count',  'athlete_count', 'photo_count', 'map', 'trainer', 'commute', 'manual', 'private',
+        'visibility', 'flagged', 'gear_id', 'start_latlong', 'end_latlong', 'average_temperature', 'device_watts',
+        'has_heartrate', 'heartrate_opt_out', 'display_hide_heartrate_option', 'elev_high', 'elev_low', 'upload_id',
+        'external_id', 'upload_id_str', 'from_accepted_tag', 'pr_count', 'total_photo_count', 'has_kudoed', 'created_at',
+        'updated_at', 'weighted_average_watts'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

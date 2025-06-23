@@ -15,12 +15,14 @@ watch(strearch_data, (newValue) => {
 }) 
 
 const tableData = ref<any>([])
+const loading = ref(true);
 
 onMounted(() => {
     get_athlete()
 })
 
 function get_athlete() {
+    loading.value = true;
     getAthlete()
 }
 
@@ -36,6 +38,7 @@ function fill_fields(data: any) {
     tableData.value.push({col1: 'Profile picture', col2:'image', col3: data.athlete.profile_picture_large})
     tableData.value.push({col1: 'Location', col2:'', col3: data.athlete.city + ' ' + data.athlete.state + ' ' + data.athlete.country})
     tableData.value.push({col1: 'Date of last download', col2:'athlete', col3: data.date_of_last_athlete_strava_update})
+    loading.value = false;
 }
 
 </script>
@@ -48,7 +51,7 @@ function fill_fields(data: any) {
             <div class="px-8 py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
                     <p class="md:px-32 py-8 w-full text-xl font-semibold tracking-tight">Athlete Details</p>
 
-                <DataTable :value="tableData" size="small" stripedRows style="width: 50%"
+                <DataTable :value="tableData" :loading="loading" size="small" stripedRows style="width: 50%"
                     :pt="{
                         thead: { style: 'display: none' },
                     }"

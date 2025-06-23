@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\AthleteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExperimentalController;
@@ -17,6 +18,7 @@ Route::get('/', function () {
 Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('athlete', [AthleteController::class, 'index'])->middleware(['auth', 'verified'])->name('athlete');
 Route::get('activities', [ActivityController::class, 'index'])->middleware(['auth', 'verified'])->name('activities');
+Route::get('analyses', [AnalysisController::class, 'index'])->middleware(['auth', 'verified'])->name('analyses');
 Route::get('experimental', [ExperimentalController::class, 'index'])->middleware(['auth', 'verified'])->name('experimental');
 
 // API routes to save data

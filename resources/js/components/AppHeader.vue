@@ -61,7 +61,7 @@ const mainNavItems: NavItem[] = [
     // },
     // {
     //     title: 'Analyses',
-    //     href: route('dashboard'),
+    //     href: route('analyses'),
     //     icon: ChartSpline,
     // },
     // {

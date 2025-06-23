@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
-use App\Models\Filter;
 use App\Models\Setting;
 use App\Traits\Utilities;
 use Illuminate\Http\Request;
@@ -21,46 +20,18 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($filtered = null): Response
+    public function index(): Response
     {
-        $activities = $this->getActivities($filtered);
-        // dd($activities[1]->average_watts);
+        $activities = $this->getActivities();
 
         return Inertia::render('Activities', [
         ]);
 
-        return Inertia::render('Activities', [
-            'activities' => $activities,
-            'filters' => Filter::filters_names(),
-            // 'access_token' => $this->getAccessToken(),
-            'client_id' => $this->getClientId(),
-            'client_secret' => $this->getClientSecret(),
-            'refresh_token' => $this->getRefreshToken(),
-            'url' => 'https://www.strava.com/api/v3/athlete/activities',
-            'filter_parameter' => is_null($filtered) ? false : true,
-            'date_of_last_strava_update' => Setting::last_activities_update_from_strava_as_unix_timestamp(),
-            'sorted_by' => $this->sort_column,
-            'sorted_by_order' => $this->sort_direction,
-        ]);
     }
 
-    public function index_with_change_of_filter(Request $request): Response
+    private function getActivities()
     {
-        Filter::set_active($request->input('selected'));
-
-        return $this->index(1);
-    }
-
-    private function getFilter($filtered)
-    {
-        return is_null($filtered) ? [] : Filter::active_filter();
-    }
-
-    private function getActivities($filtered)
-    {
-        $filter = $this->getFilter($filtered);
-
-        $activities = $this->my('activities', false)->where($filter);
+        $activities = $this->my('activities', false); // ->where($filter);
         $activities = $this->addOrderBy($activities);
 
         return $activities->get();
@@ -200,9 +171,9 @@ class ActivityController extends Controller
         //
     }
 
-    public function api_get($filtered = null)
+    public function api_get()
     {
-        $activities = $this->getActivities($filtered);
+        $activities = $this->getActivities();
 
         return response()->json([
             'activities' => $activities ?? false,
