@@ -179,6 +179,7 @@ export const useStrearchData = defineStore(('strearchData'),  {
                 i++;
             })
             this.justTheFilter = this.activeFilter.filter
+            this.saveFiltersActually()
 
         },
 

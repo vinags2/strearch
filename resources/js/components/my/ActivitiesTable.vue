@@ -17,7 +17,7 @@ import { storeToRefs } from 'pinia'
 
 const strearchData = useStrearchData()
 const { activities, loading: loading, lastUpdate, justTheFilter} = storeToRefs(strearchData)
-strearchData.init()
+strearchData.initActivities()
 
 const sportTypes = ref(['Ride', 'VirtualRide', 'Run', 'Walk', 'Workout'])
 
@@ -49,7 +49,6 @@ const formatDate = (value:Date) => {
         class="pt-4"
         filterDisplay="menu"
         stripedRows scrollable scrollHeight="580px" :virtualScrollerOptions="{ itemSize: 44 }"
-        sortField="start_date_local_as_timestamp" :sortOrder="-1" 
     >
         <template #empty> No activities found. </template>
         <template #loading> Loading activity data. Please wait. </template>

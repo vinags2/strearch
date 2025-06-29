@@ -16,6 +16,8 @@ import { storeToRefs } from 'pinia'
 
 const strearchData = useStrearchData()
 const { filters, loading: loading, activeFilter, activeFilterIndex} = storeToRefs(strearchData)
+strearchData.initFilters()
+// strearchData.init()
 
 const askForFilterName = ref(false);
 const filterName = ref<string>('a new filter')

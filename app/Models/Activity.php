@@ -4,10 +4,13 @@ namespace App\Models;
 
 use App\Models\Scopes\MyScope;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+// use Illuminate\Database\Eloquent\Scope;
 
 class Activity extends Model
 {
@@ -24,6 +27,14 @@ class Activity extends Model
         'has_heartrate', 'heartrate_opt_out', 'display_hide_heartrate_option', 'elev_high', 'elev_low', 'upload_id',
         'external_id', 'upload_id_str', 'from_accepted_tag', 'pr_count', 'total_photo_count', 'has_kudoed', 'created_at',
         'updated_at', 'weighted_average_watts'];
+
+    // protected static function boot()
+    // {
+    //     parent::boot();
+    //     static::addGlobalScope('order', function (Builder $builder) {
+    //         $builder->orderBy('start_date_local', 'desc');
+    //     });
+    // }
 
     public function user(): BelongsTo
     {

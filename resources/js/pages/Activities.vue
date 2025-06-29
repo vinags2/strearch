@@ -2,6 +2,13 @@
 
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { defineAsyncComponent, ref } from 'vue'
+const ActivitiesTable = defineAsyncComponent(() =>
+  import('@/components/my/ActivitiesTable.vue')
+)
+const StatsTable = defineAsyncComponent(() =>
+  import('@/components/my/StatsTable.vue')
+)
 
 import Tabs from 'primevue/tabs';
 import TabList from 'primevue/tablist';
@@ -9,10 +16,9 @@ import Tab from 'primevue/tab';
 import TabPanels from 'primevue/tabpanels';
 import TabPanel from 'primevue/tabpanel';
 
-
-import StatsTable from '@/components/my/StatsTable.vue';
-import ActivitiesTable from '@/components/my/ActivitiesTable.vue';
 import Filters from '@/components/my/Filters.vue';
+
+const showStatsTable = ref(false)
 
 </script>
 
@@ -29,7 +35,7 @@ import Filters from '@/components/my/Filters.vue';
                     <TabList class="flex flex-row">
                         <Tab value="0" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Activities</Tab>
                         <Tab value="3" disabled>&nbsp;&nbsp;</Tab>
-                        <Tab value="1" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Statistics</Tab>
+                        <Tab value="1" @click="showStatsTable = true" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Statistics</Tab>
                         <Tab value="3" disabled>&nbsp;&nbsp;</Tab>
                         <Tab value="2" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Charts</Tab>
                     </TabList>
@@ -37,8 +43,8 @@ import Filters from '@/components/my/Filters.vue';
                         <TabPanel value="0">
                             <ActivitiesTable></ActivitiesTable>
                         </TabPanel>
-                        <TabPanel value="1">
-                            <div class="pt-4"> <StatsTable></StatsTable> </div>
+                        <TabPanel  value="1">
+                            <div class="pt-4"> <StatsTable v-if="showStatsTable" ></StatsTable> </div>
                         </TabPanel>
                         <TabPanel value="2">
                             <div class="mt-8">Charts and Analyses will go here.</div>

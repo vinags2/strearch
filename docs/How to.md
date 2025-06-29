@@ -1,6 +1,7 @@
 How to upload files from home to web server (gregvinall.com)
     1. compress files at home
         - cd ~/Laravel/strearch
+        - rm strearch.bz2 strearch.tbz
         - tar -cvjf strearch.bz2 *
         - copy strearch.bz2 to the webserver using filezilla
     2. ssh to web server

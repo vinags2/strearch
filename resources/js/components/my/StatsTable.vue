@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -12,6 +12,8 @@ const strearchData = useStrearchData()
 const { filteredActivities, loading: loading} = storeToRefs(strearchData)
 
 const statsTableData = ref<any>([])
+
+onMounted( () => fill_statsTableData(filteredActivities.value)) 
 
 watch(filteredActivities, () => { fill_statsTableData(filteredActivities.value) })
 

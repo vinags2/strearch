@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function activities(): HasMany
     {
-        return $this->hasMany(Activity::class);
+        return $this->hasMany(Activity::class)->orderBy('start_date_local', 'desc');
     }
 
     public function filters(): HasMany
