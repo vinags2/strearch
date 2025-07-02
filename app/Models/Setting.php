@@ -20,6 +20,7 @@ class Setting extends Model
     {
         return [
             'analysis_id' => 'array',
+            'auto_update_activities' => 'boolean',
         ];
     }
 
@@ -80,6 +81,11 @@ class Setting extends Model
 
         return $sort['sort_direction'] == 'asc' ? 'desc' : 'asc';
 
+    }
+
+    public static function auto_update_activities()
+    {
+        return Setting::first('auto_update_activities')?->auto_update_activities;
     }
 
     public static function last_activities_update_from_strava()

@@ -6,6 +6,7 @@ use App\Http\Controllers\AthleteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExperimentalController;
 use App\Http\Controllers\FilterController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StravaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,6 +21,8 @@ Route::get('athlete', [AthleteController::class, 'index'])->middleware(['auth', 
 Route::get('activities', [ActivityController::class, 'index'])->middleware(['auth', 'verified'])->name('activities');
 Route::get('analyses', [AnalysisController::class, 'index'])->middleware(['auth', 'verified'])->name('analyses');
 Route::get('experimental', [ExperimentalController::class, 'index'])->middleware(['auth', 'verified'])->name('experimental');
+Route::get('profile/preferences', [SettingController::class, 'edit'])->middleware(['auth', 'verified'])->name('preferences.edit');
+Route::patch('profile/preferences', [SettingController::class, 'update'])->name('preferences.update');
 
 // API routes to save data
 Route::post('/strava/access_token/save/{token}', [StravaController::class, 'store'])->middleware(['auth', 'verified'])->name('token.save');

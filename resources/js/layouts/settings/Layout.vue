@@ -14,6 +14,10 @@ const sidebarNavItems: NavItem[] = [
         title: 'Password',
         href: route('password.edit'),
     },
+    {
+        title: 'Preferences',
+        href: route('preferences.edit'),
+    },
     // {
     //     title: 'Appearance',
     //     href: route('appearance'),

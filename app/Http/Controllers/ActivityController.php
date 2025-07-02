@@ -25,6 +25,7 @@ class ActivityController extends Controller
         $activities = $this->getActivities();
 
         return Inertia::render('Activities', [
+            'autoUpdateActivities' => Setting::auto_update_activities(),
         ]);
 
     }

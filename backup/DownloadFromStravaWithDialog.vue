@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, defineEmits, onMounted } from 'vue';
+import { ref, computed, watch, defineEmits } from 'vue';
 import { getStravaData } from '@/functions/StravaAPI.js'
 import { strava_data } from '@/functions/Flags.js'
 import {Button} from '@/components/ui/button'
@@ -49,7 +49,7 @@ function showDialog() {
     textForAlertDescription.value = 'Please wait while the informaton from Strava is being downloaded'
     textForAlertHeader.value = 'Downloading ' + whatToDownload.value + ' information'
     showClose.value = false
-    showAlert.value = props.withDialog
+    showAlert.value = true
     getStravaData(props.downloadWhat)
 }
 
@@ -68,16 +68,12 @@ function showSuccessBeforeClosing(success: boolean = true) {
     // }, 3000);
 }
 
-onMounted(() => {
-    if (!props.withDialog) showDialog()
-})
-
 </script>
 <template>
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button @click="showDialog" v-if="withDialog" class="-m-2 bg-transparent hover:bg-blue-400 text-inherit ml-2 rounded inline-flex items-center">
+                <Button @click="showDialog" class="-m-2 bg-transparent hover:bg-blue-400 text-inherit ml-2 rounded inline-flex items-center">
                     <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                         <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
                     </svg>

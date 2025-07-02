@@ -10,6 +10,13 @@ const StatsTable = defineAsyncComponent(() =>
   import('@/components/my/StatsTable.vue')
 )
 
+const props = defineProps({
+    autoUpdateActivities: {
+        type: Boolean,
+        default: true,
+    },
+})
+
 import Tabs from 'primevue/tabs';
 import TabList from 'primevue/tablist';
 import Tab from 'primevue/tab';
@@ -41,7 +48,7 @@ const showStatsTable = ref(false)
                     </TabList>
                     <TabPanels>
                         <TabPanel value="0">
-                            <ActivitiesTable></ActivitiesTable>
+                            <ActivitiesTable :auto-update-activities="props.autoUpdateActivities"></ActivitiesTable>
                         </TabPanel>
                         <TabPanel  value="1">
                             <div class="pt-4"> <StatsTable v-if="showStatsTable" ></StatsTable> </div>

@@ -15,13 +15,25 @@ import DownloadFromStravaWithDialog from '@/components/DownloadFromStravaWithDia
 import { useStrearchData } from '@/stores/StrearchStore';
 import { storeToRefs } from 'pinia'
 
+const props = defineProps({
+    autoUpdateActivities: {
+        type: Boolean,
+        default: true,
+    },
+})
+
+const autoUpdateComplete = ref(!props.autoUpdateActivities)
+
 const strearchData = useStrearchData()
 const { activities, loading: loading, lastUpdate, justTheFilter} = storeToRefs(strearchData)
 strearchData.initActivities()
 
 const sportTypes = ref(['Ride', 'VirtualRide', 'Run', 'Walk', 'Workout'])
 
-function get_activities() { strearchData.initActivities(true) }
+function get_activities() {
+    autoUpdateComplete.value = true
+    strearchData.initActivities(true)
+}
 
 function onFilterUpdate(event:any) { strearchData.updateFilteredActivities(event.filteredValue) }
 
@@ -143,14 +155,16 @@ const formatDate = (value:Date) => {
         <template #footer> 
             <div class="flex justify-between">
                 <div class="">
-                    <span class="">Update Actitivies from Strava</span>
-                    <DownloadFromStravaWithDialog @newdownload="get_activities" download-what="activities"></DownloadFromStravaWithDialog>
+                    <span v-if="autoUpdateComplete" class="">Update Actitivies from Strava</span>
+                    <span v-else class="animate-pulse">Auto-updating actitivies from Strava</span>
+                    <DownloadFromStravaWithDialog @newdownload="get_activities" :with-dialog="autoUpdateComplete" download-what="activities"></DownloadFromStravaWithDialog>
                 </div>
                 <div> Activities current to {{ lastUpdate }} </div>
-                <div class="">
+                <div v-if="autoUpdateComplete" class="">
                     <span class="">Re-download all activities from Strava</span>
                     <DownloadFromStravaWithDialog @newdownload="get_activities" download-what="all activities"></DownloadFromStravaWithDialog>
                 </div>
+                <div v-else></div>
             </div>
         </template>
     </DataTable>

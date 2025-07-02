@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Traits\Utilities;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SettingController extends Controller
 {
@@ -15,7 +17,10 @@ class SettingController extends Controller
      */
     public function index()
     {
-        return $this->NotDoneYet();
+
+        return Inertia::render('settings/Preferences', [
+            'autoUpdateActivities' => Setting::auto_update_activities(),
+        ]);
     }
 
     /**
@@ -53,16 +58,25 @@ class SettingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Setting $setting)
+    public function edit(Request $request): Response
     {
-        //
+        return Inertia::render('settings/Preferences', [
+            'autoUpdateActivities' => Setting::auto_update_activities(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Setting $setting)
+    public function update(Request $request)
     {
+        // dd($request->input(), $request->input('autoUpdateActivities'));
+
+        Setting::updateOrCreate(
+            ['user_id' => $this->my('id')],
+            ['auto_update_activities' => $request->input('autoUpdateActivities')]
+        );
+
         //
     }
 
