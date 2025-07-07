@@ -1,23 +1,12 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import SettingsLayout from '@/layouts/settings/Layout.vue';
-import { TransitionRoot } from '@headlessui/vue';
+import SettingsLayout from '@/layouts/settings/SettingsLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { type BreadcrumbItem } from '@/types';
-
-const breadcrumbItems: BreadcrumbItem[] = [
-    {
-        title: 'Password settings',
-        href: '/settings/password',
-    },
-];
+import Button from 'primevue/button'
+import Layout from '@/layouts/my/Layout.vue';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
@@ -52,7 +41,7 @@ const updatePassword = () => {
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbItems">
+    <Layout>
         <Head title="Password settings" />
 
         <SettingsLayout>
@@ -61,8 +50,8 @@ const updatePassword = () => {
 
                 <form @submit.prevent="updatePassword" class="space-y-6">
                     <div class="grid gap-2">
-                        <Label for="current_password">Current password</Label>
-                        <Input
+                        <label for="current_password">Current password</label>
+                        <input
                             id="current_password"
                             ref="currentPasswordInput"
                             v-model="form.current_password"
@@ -71,12 +60,12 @@ const updatePassword = () => {
                             autocomplete="current-password"
                             placeholder="Current password"
                         />
-                        <InputError :message="form.errors.current_password" />
+                        <inputError :message="form.errors.current_password" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="password">New password</Label>
-                        <Input
+                        <label for="password">New password</label>
+                        <input
                             id="password"
                             ref="passwordInput"
                             v-model="form.password"
@@ -89,8 +78,8 @@ const updatePassword = () => {
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="password_confirmation">Confirm password</Label>
-                        <Input
+                        <label for="password_confirmation">Confirm password</label>
+                        <input
                             id="password_confirmation"
                             v-model="form.password_confirmation"
                             type="password"
@@ -102,20 +91,12 @@ const updatePassword = () => {
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <Button :disabled="form.processing">Save password</Button>
+                        <Button severity="info" :disabled="form.processing">Save password</Button>
 
-                        <TransitionRoot
-                            :show="form.recentlySuccessful"
-                            enter="transition ease-in-out"
-                            enter-from="opacity-0"
-                            leave="transition ease-in-out"
-                            leave-to="opacity-0"
-                        >
-                            <p class="text-sm text-neutral-600">Saved</p>
-                        </TransitionRoot>
+                        <span v-show="form.recentlySuccessful">Saved</span>
                     </div>
                 </form>
             </div>
         </SettingsLayout>
-    </AppLayout>
+    </Layout>
 </template>

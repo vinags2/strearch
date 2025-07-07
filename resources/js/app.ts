@@ -9,6 +9,9 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
+import Tooltip from 'primevue/tooltip';
+import ToastService from 'primevue/toastservice';
+
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -43,6 +46,8 @@ createInertiaApp({
                 }
             })
             .use(pinia)
+            .directive('tooltip', Tooltip)
+            .use(ToastService)
             .mount(el);
     },
     progress: {

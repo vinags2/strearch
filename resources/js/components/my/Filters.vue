@@ -2,7 +2,6 @@
 
 import { ref, watch, computed } from 'vue';
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Button } from '@/components/ui/button';
 
 import Select from 'primevue/select';
@@ -41,51 +40,43 @@ const save_filters = () => {
 </script>
 
 <template>
-    <TooltipProvider>
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <div class="">
-                    <Select
-                        @change="onChangeOfFilter"
-                        v-model="activeFilter"
-                        :loading="loading"
-                        :options="filters"
-                        showClear
-                        optionLabel="name" data-key="id"
-                        empty-message="No filters available" placeholder="Select a filter"
-                        style="background-color: #E0FFFF"
-                    />
-                </div>
-            </TooltipTrigger>
-            <TooltipContent>
-                <p>Select a filter</p>
-            </TooltipContent>
-        </Tooltip>
-    </TooltipProvider>
-    <TooltipProvider>
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <div class="pl-8">
-                    <a href="" @click.prevent="askForFilterName = true"><Button unstyled style="background-color: #E0FFFF"><Save color="black"></Save></Button></a>
-                </div>
-            </TooltipTrigger>
-            <TooltipContent>
-                <p>Save Filter</p>
-            </TooltipContent>
-        </Tooltip>
-    </TooltipProvider>
-    <TooltipProvider>
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <div class="pl-1" v-show="activeFilterIndex >= 0">
-                    <a href="" @click.prevent="deleteFilter()"><Button unstyled style="background-color: #E0FFFF"><CircleX color="red"></CircleX></Button></a>
-                </div>
-            </TooltipTrigger>
-            <TooltipContent>
-                <p>Delete Filter</p>
-            </TooltipContent>
-        </Tooltip>
-    </TooltipProvider>
+    <div class="">
+        <Select
+            @change="onChangeOfFilter"
+            v-model="activeFilter"
+            :loading="loading"
+            :options="filters"
+            showClear
+            optionLabel="name" data-key="id"
+            empty-message="No filters available" placeholder="Select a filter"
+            style="background-color: #E0FFFF"
+            v-tooltip.top="{
+                value: 'Select or clear the filter',
+                pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' }
+            }"
+        />
+    </div>
+    <div class="pl-4">
+        <a href="" @click.prevent="askForFilterName = true">
+            <Button unstyled style="background-color: #E0FFFF"
+                v-tooltip.top="{
+                    value: 'Save Filter',
+                    pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' }
+                }">
+                <Save color="black"></Save>
+            </Button></a>
+    </div>
+    <div class="pl-1" v-show="activeFilterIndex >= 0">
+        <a href="" @click.prevent="deleteFilter()">
+            <Button unstyled style="background-color: #E0FFFF"
+                v-tooltip.top="{
+                    value: 'Delete Filter',
+                    pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' }
+                }">
+                <CircleX color="red"></CircleX>
+            </Button>
+        </a>
+    </div>
     
     <Dialog v-model:visible="askForFilterName" modal header="Filter name" :closable="false">
         <span class="text-surface-500 dark:text-surface-400 block mb-2">Enter a name for the filter</span>

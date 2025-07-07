@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Layout from '@/layouts/my/Layout.vue'
 import { onMounted, ref, watch } from 'vue';
-import DownloadFromStravaWithDialog from '@/components/DownloadFromStravaWithDialog.vue';
+import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
 import { getAthlete } from '@/functions/StrearchAPI.js'
 import { strearch_data } from '@/functions/Flags.js'
 import DataTable from 'primevue/datatable';
@@ -46,9 +46,10 @@ function fill_fields(data: any) {
 <template>
     <Head title="Athlete Details" />
 
-    <AppLayout>
-        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4  bg-gradient-to-r from-cyan-200 to-blue-300">
-            <div class="px-8 py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+    <Layout>
+        <!-- <div class="flex-col  bg-gradient-to-r from-cyan-200 to-blue-300 flex h-full flex-1 flex-col gap-4 rounded-xl p-4  bg-gradient-to-r from-cyan-200 to-blue-300"> -->
+            <!-- <div class="px-8 py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min"> -->
+            <div class="px-8">
                     <p class="md:px-32 py-8 w-full text-xl font-semibold tracking-tight">Athlete Details</p>
 
                 <DataTable :value="tableData" :loading="loading" size="small" stripedRows style="width: 50%"
@@ -60,7 +61,7 @@ function fill_fields(data: any) {
                     <Column field="col2" header="Download">
                         <template #body="{ data }">
                             <div v-if="data.col2 && (data.col2 != 'image')" class="flex items-center gap-2">
-                            <DownloadFromStravaWithDialog @newdownload="get_athlete" :download-what="data.col2"></DownloadFromStravaWithDialog>
+                            <DownloadFromStrava @newdownload="get_athlete" :download-what="data.col2"></DownloadFromStrava>
                             </div>
                         </template>
                     </Column>
@@ -76,6 +77,6 @@ function fill_fields(data: any) {
 
 
             </div>
-        </div>
-    </AppLayout>
+        <!-- </div> -->
+    </Layout>
 </template>

@@ -49,7 +49,7 @@ class Activity extends Model
     protected function startDateLocal(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => $dt = Carbon::parse($value)->format('D j M Y'),
+            get: fn (?string $value) => $dt = Carbon::parse($value)->format('D j M Y'),
         );
     }
 

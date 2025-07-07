@@ -179,6 +179,7 @@ class ActivityController extends Controller
         return response()->json([
             'activities' => $activities ?? false,
             'date_of_last_activities_strava_update' => Setting::last_activities_update_from_strava(),
+            'sportTypes' => $this->getSportTypes(),
         ],
             201
         );

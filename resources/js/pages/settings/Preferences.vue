@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { TransitionRoot } from '@headlessui/vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/AppLayout.vue';
-import SettingsLayout from '@/layouts/settings/Layout.vue';
+import Button from 'primevue/button'
+import Layout from '@/layouts/my/Layout.vue';
+import SettingsLayout from '@/layouts/settings/SettingsLayout.vue';
 
 interface Props {
     autoUpdateActivities: boolean
@@ -26,7 +25,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AppLayout>
+    <Layout>
         <Head title="Profile settings" />
 
         <SettingsLayout>
@@ -47,20 +46,12 @@ const submit = () => {
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <Button :disabled="form.processing">Save</Button>
+                        <Button severity="info" type="submit" :disabled="form.processing">Save</Button>
 
-                        <TransitionRoot
-                            :show="form.recentlySuccessful"
-                            enter="transition ease-in-out"
-                            enter-from="opacity-0"
-                            leave="transition ease-in-out"
-                            leave-to="opacity-0"
-                        >
-                            <p class="text-sm text-neutral-600">Saved.</p>
-                        </TransitionRoot>
+                        <span v-show="form.recentlySuccessful">Saved</span>
                     </div>
                 </form>
             </div>
         </SettingsLayout>
-    </AppLayout>
+    </Layout>
 </template>

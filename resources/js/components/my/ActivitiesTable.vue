@@ -10,7 +10,7 @@ import InputText from 'primevue/inputtext';
 
 import { Binoculars } from 'lucide-vue-next';
 
-import DownloadFromStravaWithDialog from '@/components/DownloadFromStravaWithDialog.vue';
+import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
 
 import { useStrearchData } from '@/stores/StrearchStore';
 import { storeToRefs } from 'pinia'
@@ -25,10 +25,10 @@ const props = defineProps({
 const autoUpdateComplete = ref(!props.autoUpdateActivities)
 
 const strearchData = useStrearchData()
-const { activities, loading: loading, lastUpdate, justTheFilter} = storeToRefs(strearchData)
+const { activities, sportTypes, loading: loading, lastUpdate, justTheFilter} = storeToRefs(strearchData)
 strearchData.initActivities()
 
-const sportTypes = ref(['Ride', 'VirtualRide', 'Run', 'Walk', 'Workout'])
+// const sportTypes = ref(['Ride', 'VirtualRide', 'Run', 'Walk', 'Workout'])
 
 function get_activities() {
     autoUpdateComplete.value = true
@@ -60,7 +60,7 @@ const formatDate = (value:Date) => {
         size="small"
         class="pt-4"
         filterDisplay="menu"
-        stripedRows scrollable scrollHeight="580px" :virtualScrollerOptions="{ itemSize: 44 }"
+        stripedRows scrollable scrollHeight="550px" :virtualScrollerOptions="{ itemSize: 44 }"
     >
         <template #empty> No activities found. </template>
         <template #loading> Loading activity data. Please wait. </template>
@@ -157,12 +157,12 @@ const formatDate = (value:Date) => {
                 <div class="">
                     <span v-if="autoUpdateComplete" class="">Update Actitivies from Strava</span>
                     <span v-else class="animate-pulse">Auto-updating actitivies from Strava</span>
-                    <DownloadFromStravaWithDialog @newdownload="get_activities" :with-dialog="autoUpdateComplete" download-what="activities"></DownloadFromStravaWithDialog>
+                    <DownloadFromStrava @newdownload="get_activities" :with-dialog="autoUpdateComplete" download-what="activities"></DownloadFromStrava>
                 </div>
                 <div> Activities current to {{ lastUpdate }} </div>
                 <div v-if="autoUpdateComplete" class="">
                     <span class="">Re-download all activities from Strava</span>
-                    <DownloadFromStravaWithDialog @newdownload="get_activities" download-what="all activities"></DownloadFromStravaWithDialog>
+                    <DownloadFromStrava @newdownload="get_activities" download-what="all activities"></DownloadFromStrava>
                 </div>
                 <div v-else></div>
             </div>

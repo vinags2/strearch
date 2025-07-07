@@ -1,14 +1,20 @@
 <script setup lang="ts">
 
-import AppLayout from '@/layouts/AppLayout.vue';
+import Layout from '@/layouts/my/Layout.vue';
 import { Head } from '@inertiajs/vue3';
-import { defineAsyncComponent, ref } from 'vue'
-const ActivitiesTable = defineAsyncComponent(() =>
-  import('@/components/my/ActivitiesTable.vue')
-)
-const StatsTable = defineAsyncComponent(() =>
-  import('@/components/my/StatsTable.vue')
-)
+import Button from 'primevue/button';
+import Filters from '@/components/my/Filters.vue';
+// import { defineAsyncComponent, ref } from 'vue'
+import { ref } from 'vue'
+
+// const ActivitiesTable = defineAsyncComponent(() =>
+//   import('@/components/my/ActivitiesTable.vue')
+// )
+// const StatsTable = defineAsyncComponent(() =>
+//   import('@/components/my/StatsTable.vue')
+// )
+  import ActivitiesTable from '@/components/my/ActivitiesTable.vue'
+import StatsTable from '@/components/my/StatsTable.vue';
 
 const props = defineProps({
     autoUpdateActivities: {
@@ -17,48 +23,40 @@ const props = defineProps({
     },
 })
 
-import Tabs from 'primevue/tabs';
-import TabList from 'primevue/tablist';
-import Tab from 'primevue/tab';
-import TabPanels from 'primevue/tabpanels';
-import TabPanel from 'primevue/tabpanel';
-
-import Filters from '@/components/my/Filters.vue';
 
 const showStatsTable = ref(false)
+const showActivitiesTable = ref(true)
+
+const statsTableOn = () => {
+    showActivitiesTable.value = false
+    showStatsTable.value = true
+}
+
+const activitiesTableOn = () => {
+    showStatsTable.value = false
+    showActivitiesTable.value = true
+}
 
 </script>
 
 <template>
-    <Head title="Activities" />
+    <Head title="Activities"></Head>
 
-    <AppLayout>
+    <Layout>
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl bg-gradient-to-r from-cyan-200 to-blue-300">
             <div class="py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-                <div class="flex pb-8">
+                <div class="flex flex-row pb-8 justify-left items-center">
                     <Filters></Filters>
+                    <Button class="ml-8 h-9" severity="info" @click="activitiesTableOn" label="Activities"></Button>
+                    <Button class="ml-4 h-9" severity="info" @click="statsTableOn" label="Statistics"></Button>
                 </div>
-                <Tabs value="0" unstyled >
-                    <TabList class="flex flex-row">
-                        <Tab value="0" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Activities</Tab>
-                        <Tab value="3" disabled>&nbsp;&nbsp;</Tab>
-                        <Tab value="1" @click="showStatsTable = true" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Statistics</Tab>
-                        <Tab value="3" disabled>&nbsp;&nbsp;</Tab>
-                        <Tab value="2" class="px-2 py-1 bg-blue-400 rounded-md text-white decoration-double">Charts</Tab>
-                    </TabList>
-                    <TabPanels>
-                        <TabPanel value="0">
-                            <ActivitiesTable :auto-update-activities="props.autoUpdateActivities"></ActivitiesTable>
-                        </TabPanel>
-                        <TabPanel  value="1">
-                            <div class="pt-4"> <StatsTable v-if="showStatsTable" ></StatsTable> </div>
-                        </TabPanel>
-                        <TabPanel value="2">
-                            <div class="mt-8">Charts and Analyses will go here.</div>
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
+                <div v-show="showActivitiesTable" >
+                    <ActivitiesTable :auto-update-activities=props.autoUpdateActivities></ActivitiesTable>
+                </div>
+                <div v-show="showStatsTable" class="pt-4">
+                    <StatsTable v-if="showStatsTable" ></StatsTable>
+                </div>
             </div>
         </div>
-    </AppLayout>
+    </Layout>
 </template>

@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Strava;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 trait Utilities
@@ -66,5 +67,17 @@ trait Utilities
     public static function CurrentYear()
     {
         return now()->format('Y');
+    }
+
+    public function getSportTypes()
+    {
+        $sportTypes = DB::table('activities')->select('sport_type')->distinct()->get()->sortBy('sport_type');
+
+        $objectValues = [];
+        foreach ($sportTypes as $object) {
+            $objectValues[] = $object->sport_type;
+        }
+
+        return $objectValues;
     }
 }

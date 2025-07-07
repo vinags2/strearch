@@ -12,10 +12,10 @@ import { Head, Link } from '@inertiajs/vue3';
             <nav class="flex items-center justify-end gap-4">
                 <Link
                     v-if="$page.props.auth.user"
-                    :href="route('dashboard')"
+                    :href="route('activities')"
                     class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
                 >
-                    Dashboard
+                    Go
                 </Link>
                 <template v-else>
                     <Link
@@ -48,7 +48,7 @@ import { Head, Link } from '@inertiajs/vue3';
                         sorted in order of average wattage.
                     </p>
                     <p v-if="$page.props.auth.user" class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                        Click 'Dashboard' above to continue.
+                        Click 'Go' above to continue.
                     </p>
                     <p v-else class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
                         Click 'Login' or 'Register' above to continue.

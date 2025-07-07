@@ -55,6 +55,7 @@ export const useStrearchData = defineStore(('strearchData'),  {
 
     state: () => ({
         activities: <Activity[]>[],
+        sportTypes: <string>{},
         lastUpdate: <string>'',
         filteredActivities: <Activity[]>[],
         filter: <Filter>{},
@@ -93,6 +94,7 @@ export const useStrearchData = defineStore(('strearchData'),  {
                     .get(route('activities.get'))
                     .then ((response) => {
                         this.activities = response.data.activities
+                        this.sportTypes = response.data.sportTypes
                         this.stringToDate()
                         this.lastUpdate = response.data.date_of_last_activities_strava_update
                         console.log('useStrearchData: Activities data retrieved from the database', this.activities)

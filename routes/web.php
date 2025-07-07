@@ -3,10 +3,10 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\AthleteController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExperimentalController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\StravaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,7 +16,11 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return redirect()->route('home');
+})->name('dashboard');
+
+Route::get('statistics', [StatisticsController::class, 'index'])->middleware(['auth', 'verified'])->name('statistics');
 Route::get('athlete', [AthleteController::class, 'index'])->middleware(['auth', 'verified'])->name('athlete');
 Route::get('activities', [ActivityController::class, 'index'])->middleware(['auth', 'verified'])->name('activities');
 Route::get('analyses', [AnalysisController::class, 'index'])->middleware(['auth', 'verified'])->name('analyses');
@@ -30,7 +34,7 @@ Route::post('/athlete/save/{id}', [AthleteController::class, 'store'])->middlewa
 
 // API routes to get data
 Route::get('/strava/DfSD', [StravaController::class, 'stravaMetaData'])->middleware(['auth', 'verified'])->name('dfsd');
-Route::get('/stats', [DashboardController::class, 'stats'])->middleware(['auth', 'verified'])->name('stats');
+Route::get('/stats', [StatisticsController::class, 'stats'])->middleware(['auth', 'verified'])->name('stats');
 Route::get('/athlete/get', [AthleteController::class, 'api_get'])->middleware(['auth', 'verified'])->name('athlete.get');
 Route::get('/activities/get', [ActivityController::class, 'api_get'])->middleware(['auth', 'verified'])->name('activities.get');
 Route::post('/activities/save', [ActivityController::class, 'store'])->middleware(['auth', 'verified'])->name('activities.save');
