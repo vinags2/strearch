@@ -28,6 +28,8 @@ export const strava_data = ref({code:0, data:['no data']})
 // 19 = Filter NOT deleted from the DB
 // 20 = Filter set active
 // 21 = Filter NOT set active
+// 22 = Chart Data uploaded from Laravel
+// 23 = Chart Data NOT uploaded from Laravel
 export const strearch_data = ref({code:0, data:'no data'})
 
 // (do not) show debug messages

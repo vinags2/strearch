@@ -2,6 +2,7 @@ import { computed } from 'vue';
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { save_activities } from '@/functions/StrearchAPI';
 
 type Filter = {
     average_cadence: object
@@ -65,6 +66,7 @@ export const useStrearchData = defineStore(('strearchData'),  {
         activeFilterIndex: -1,
         loading: false,
         maxFilterId: -1,
+        filteredActivitiesFlag: false,
     }),
 
     actions: {
@@ -164,8 +166,22 @@ export const useStrearchData = defineStore(('strearchData'),  {
         },
 
         // Update the Filtered Activities variable with the changed filtered activities from the Activities Table
-        updateFilteredActivities(data:Activity[]) {
+        async updateFilteredActivities(data:Activity[]) {
             this.filteredActivities = data
+            await this.saveFilteredActivities()
+        },
+
+        // Save the Filters to the DB
+        async saveFilteredActivities() {
+            try {
+                const res = await axios.post(route('activities.filtered.save'), this.filteredActivities);
+                console.log('useStrearchData: Filtered Activities data saved to the database', res)
+                this.filteredActivitiesFlag = ! this.filteredActivitiesFlag
+            } catch (error) {
+                console.log('*** Filtered Activities data was NOT saved to the database ***')
+                console.log('The url used was ', route('activities.filtered.save'))
+                console.log('The error is ', error)
+            }
         },
 
         // Set the Active Filter and it's dependencies, searching for the filter where active = 1

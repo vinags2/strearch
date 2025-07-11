@@ -2,20 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
-use App\Models\Filter;
+use App\Models\FilteredActivity;
 use App\Models\Setting;
 use App\Traits\Utilities;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class AnalysisController extends Controller
 {
     use Utilities;
-
-    private $sort_column;
-
-    private $sort_direction;
 
     private $analyses = [
         ['id' => 0, 'name' => 'Average Heartrate', 'active' => 0],
@@ -37,34 +30,9 @@ class AnalysisController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index()
     {
-
-        $request = request()->input();
-        $timeperiod = $this->getTimePeriod();
-        $dataset = $this->getDataset($this->getActiveFilterId($request), $timeperiod);
-        $this->analysis_ids = $this->getAnalyses();
-        $chartData = $this->getChartData($dataset, $this->analysis_ids, $timeperiod);
-
-        return Inertia::render('Analyses', [
-            'dataset' => $dataset,
-            'analyses' => $this->analyses,
-            'filters' => Filter::filters_names(),
-            'chartData' => $chartData,
-            'timeperiod' => $timeperiod,
-            'activeanalysisids' => $this->analysis_ids,
-            'chartOptions' => $this->getChartOptions($this->analysis_ids),
-        ]);
-    }
-
-    private function getActiveFilterId($request)
-    {
-        if (array_key_exists('filter_selected', $request)) {
-            Filter::set_active($request['filter_selected']);
-        }
-
-        return Filter::active_filter_id();
-
+        //
     }
 
     private function getAnalyses()
@@ -139,28 +107,26 @@ class AnalysisController extends Controller
         );
     }
 
-    private function getDataset($filterId, $timeperiod)
+    private function getDataset($timeperiod)
     {
         $selectStatement =
                 'round(AVG(average_heartrate), 0) as `AverageHR`,
                 round(avg(total_elevation_gain),0) as `Climbing`,
                 round(sum(total_elevation_gain),0) as `TotalClimbing`,
                 round(AVG(average_heartrate)/avg(total_elevation_gain),2) as `HRtoClimbing`,
-                round(avg(distance/1000),0) as `Distance`,
-                round(sum(distance/1000),0) as `TotalDistance`,
-                round(AVG(average_heartrate)/avg(distance/1000),1) as `HRtoDistance`,
-                round(avg(average_speed*3.6),0) as `Speed`,
-                round(AVG(average_heartrate)/avg(average_speed*3.6),1) as `HRtoSpeed`,
+                round(avg(distance),0) as `Distance`,
+                round(sum(distance),0) as `TotalDistance`,
+                round(AVG(average_heartrate)/avg(distance),1) as `HRtoDistance`,
+                round(avg(average_speed),0) as `Speed`,
+                round(AVG(average_heartrate)/avg(average_speed),1) as `HRtoSpeed`,
                 round(avg(average_watts),0) as `Watts`,
                 round(AVG(average_heartrate)/avg(total_elevation_gain),2) as `HRtoWatts`,
-                round(sum(total_elevation_gain)/sum(distance)*100,2) as `ClimbingToDistance`,';
+                round(sum(total_elevation_gain)/sum(distance)*10,0) as `ClimbingToDistance`,';
 
         $selectStatement .= $this->addGroupByColumn($timeperiod);
-        $filter = $this->changeFilter($filterId);
 
-        $dataset = Activity::groupBy('groupby')
+        $dataset = FilteredActivity::groupBy('groupby')
             ->selectRaw($selectStatement)
-            ->where($filter)
             ->orderBy('groupby')
             ->get();
 
@@ -175,13 +141,6 @@ class AnalysisController extends Controller
             case 3: return "concat(strftime('%Y', start_date_local ), '_',floor((strftime('%m', start_date_local)-1)/1)+1) as `groupby`";
             default: return "strftime('%Y', start_date_local ) as groupby";
         }
-    }
-
-    private function changeFilter($filterId)
-    {
-        Filter::set_active($filterId);
-
-        return Filter::active_filter();
     }
 
     private function getChartOptions($analysisIds)
@@ -211,7 +170,7 @@ class AnalysisController extends Controller
         return $chartOptions;
     }
 
-    private function getChartData($dataset, $analysisIds, $timeperiod = 0)
+    private function getChartData($dataset, $analysisIds)
     {
         $labels = [];
         $data = [];
@@ -264,5 +223,39 @@ class AnalysisController extends Controller
             case 11: return '% Ratio of Climbing to Distance';
             default: return 'Average Heartrate';
         }
+    }
+
+    public function api_get()
+    {
+        $timeperiod = $this->getTimePeriod();
+        $dataset = $this->getDataset($timeperiod);
+        $this->analysis_ids = $this->getAnalyses();
+        $chartData = $this->getChartData($dataset, $this->analysis_ids, $timeperiod);
+
+        return response()->json([
+            'dataset' => $dataset,
+            'analyses' => $this->analyses,
+            'chartData' => $chartData,
+            'timeperiod' => $timeperiod,
+            'activeanalysisids' => $this->analysis_ids,
+            'chartOptions' => $this->getChartOptions($this->analysis_ids),
+        ],
+            201
+        );
+    }
+
+    public function api_post()
+    {
+        $timeperiod = request()->input('time_period');
+        $analysis_id = request()->input('analysis_selected');
+        $analysis_ids = [request()->input('second_analysis') == 'true' ? true : false, (int) $analysis_id, (int) request()->input('analysis2_selected')];
+        Setting::updateOrCreate(
+            ['user_id' => auth()->user()->id],
+            [
+                'time_period' => $timeperiod,
+                'analysis_id' => $analysis_ids,
+            ]
+        );
+
     }
 }

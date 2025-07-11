@@ -28,16 +28,14 @@ const strearchData = useStrearchData()
 const { activities, sportTypes, loading: loading, lastUpdate, justTheFilter} = storeToRefs(strearchData)
 strearchData.initActivities()
 
-// const sportTypes = ref(['Ride', 'VirtualRide', 'Run', 'Walk', 'Workout'])
-
 function get_activities() {
     autoUpdateComplete.value = true
     strearchData.initActivities(true)
 }
 
-function onFilterUpdate(event:any) { strearchData.updateFilteredActivities(event.filteredValue) }
-
-function onFilter(event:any) { strearchData.updateFilteredActivities(event.filteredValue) }
+function onFilter(event:any) {
+    strearchData.updateFilteredActivities(event.filteredValue)
+}
 
 function activity_url(id:any) { return "https://www.strava.com/activities/" + id }
 
@@ -55,8 +53,8 @@ const formatDate = (value:Date) => {
     <DataTable
         :value="activities"
         v-model:filters="justTheFilter"
-        @filter="onFilter" @update:filters="onFilterUpdate"
-        :loading="loading"  
+        @filter="onFilter" 
+       :loading="loading"  
         size="small"
         class="pt-4"
         filterDisplay="menu"

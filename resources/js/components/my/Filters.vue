@@ -2,11 +2,10 @@
 
 import { ref, watch, computed } from 'vue';
 
-import { Button } from '@/components/ui/button';
-
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
 
 import { CircleX, Save, Check } from 'lucide-vue-next';
 
@@ -16,7 +15,6 @@ import { storeToRefs } from 'pinia'
 const strearchData = useStrearchData()
 const { filters, loading: loading, activeFilter, activeFilterIndex} = storeToRefs(strearchData)
 strearchData.initFilters()
-// strearchData.init()
 
 const askForFilterName = ref(false);
 const filterName = ref<string>('a new filter')
@@ -58,17 +56,17 @@ const save_filters = () => {
     </div>
     <div class="pl-4">
         <a href="" @click.prevent="askForFilterName = true">
-            <Button unstyled style="background-color: #E0FFFF"
+            <Button unstyled style="background-color: transparent"
                 v-tooltip.top="{
                     value: 'Save Filter',
                     pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' }
                 }">
-                <Save color="black"></Save>
+                <Save color="blue"></Save>
             </Button></a>
     </div>
     <div class="pl-1" v-show="activeFilterIndex >= 0">
         <a href="" @click.prevent="deleteFilter()">
-            <Button unstyled style="background-color: #E0FFFF"
+            <Button unstyled style="background-color: transparent"
                 v-tooltip.top="{
                     value: 'Delete Filter',
                     pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' }

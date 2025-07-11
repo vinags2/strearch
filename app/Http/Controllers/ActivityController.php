@@ -76,7 +76,6 @@ class ActivityController extends Controller
         $r = Activity::updateOrCreate(
             ['id' => $activity['id']],
             [
-                'name' => $activity['name'],
                 'id' => $activity['id'],
                 'user_id' => $this->my('id'),
                 'name' => $activity['name'],
