@@ -121,7 +121,7 @@ class AnalysisController extends Controller
                 round(AVG(average_heartrate)/avg(average_speed),1) as `HRtoSpeed`,
                 round(avg(average_watts),0) as `Watts`,
                 round(AVG(average_heartrate)/avg(total_elevation_gain),2) as `HRtoWatts`,
-                round(sum(total_elevation_gain)/sum(distance)*10,0) as `ClimbingToDistance`,';
+                round(sum(total_elevation_gain)/sum(distance)/10,2) as `ClimbingToDistance`,';
 
         $selectStatement .= $this->addGroupByColumn($timeperiod);
 
@@ -180,7 +180,7 @@ class AnalysisController extends Controller
             $data[] = $this->getRowData($row, $analysisIds[1]);
             $data2[] = $this->getRowData($row, $analysisIds[2]);
         }
-        $basic_dataset = ['pointStyle' => 'rect', 'pointRadius' => 7, 'pointHoverRadius' => 15, 'fill' => false, 'tension' => 0.1];
+        $basic_dataset = ['pointStyle' => 'rect', 'pointRadius' => 7, 'pointHoverRadius' => 15, 'fill' => false, 'tension' => 0.4];
         $dataset1 = array_merge($basic_dataset, ['label' => $this->getLabel($analysisIds[1]), 'data' => $data, 'yAxisID' => 'A', 'borderColor' => 'rgb(75, 192, 192)']);
         $dataset2 = array_merge($basic_dataset, ['label' => $this->getLabel($analysisIds[2]), 'data' => $data2, 'yAxisID' => 'B', 'borderColor' => 'rgb(255, 0, 127)']);
 
@@ -220,7 +220,7 @@ class AnalysisController extends Controller
             case 8: return 'Ratio of HR to Distance';
             case 9: return 'Ratio of HR to Speed';
             case 10: return 'Ratio of HR to Watts';
-            case 11: return '% Ratio of Climbing to Distance';
+            case 11: return 'Ratio of Climbing to Distance';
             default: return 'Average Heartrate';
         }
     }

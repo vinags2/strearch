@@ -56,7 +56,7 @@ const formatDate = (value:Date) => {
         @filter="onFilter" 
        :loading="loading"  
         size="small"
-        class="pt-4"
+        class="pt-4 ml-8 mr-8"
         filterDisplay="menu"
         stripedRows scrollable scrollHeight="550px" :virtualScrollerOptions="{ itemSize: 44 }"
     >

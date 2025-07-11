@@ -61,10 +61,9 @@ const timePeriods = [
 ]
 
 function saveForm() {
-    form.post(route('chartData.save'))
-    setTimeout(function () {
-        initChart()
-    }, 90);
+    form.post(route('chartData.save'), {
+        onSuccess: () => initChart(),
+    })
 }
 
 const selectedTimePeriod = ref('year')
@@ -72,10 +71,6 @@ const selectedTimePeriod = ref('year')
 onMounted(() => {
     initChart()
 });
-
-const heading_classes = {
-    'normal' : "w-1/4 text-left py-3 px-4 uppercase font-semibold text-sm",
-}
 
 function get_active_analysis() {
     form.second_analysis = activeanalysisids.value[0]
@@ -88,7 +83,7 @@ function get_active_analysis() {
 <template>
     <div class="flex h-full flex-1 flex-col gap-4 rounded-xl bg-gradient-to-r from-cyan-200 to-blue-300">
         <form @submit.prevent="saveForm">
-            <div class="flex items-center">
+            <div class="ml-8 flex items-center">
                 <label class="ml-2 mr-6">Analyse:</label>
                     <Select id="analysisnames" v-model="form.analysis_selected" :options="analyses" optionLabel="name" optionValue="id" class="mr-6">
                     </Select>
@@ -102,26 +97,30 @@ function get_active_analysis() {
                 <Button type="submit" severity="info" :disabled="form.processing" class="ml-6"> Apply </Button>
             </div>
         </form>
-        <Chart type="line" class="mt-6 bg-cyan-50 border-solid border-2 border-cyan-200"
+        <Chart v-if="true" type="line" class="mt-6 mr-8 ml-8 bg-cyan-50 border-solid border-2 border-cyan-200"
             id="my-chart-id"
             :options="chartOptions"
             :data="chartData"
         />
-        <div class="mt-8 text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Tabulated data per {{ selectedTimePeriod }}</div>
-        <DataTable :value="dataset" size="small" stripedRows scrollable scrollHeight="580px">
-            <Column field="groupby" header="Period"> </Column>
-            <Column field="Distance" header="Avg Distance"> </Column>
-            <Column field="Speed" header="Avg Speed"> </Column>
-            <Column field="AverageHR" header="Avg HR"> </Column>
-            <Column field="Watts" header="Avg Watts"> </Column>
-            <Column field="Climbing" header="Avg Climbing"> </Column>
-            <Column field="TotalDistance" header="Total Distance"> </Column>
-            <Column field="TotalClimbing" header="Total Climbing"> </Column>
-            <Column field="HRtoClimbing" header="HR:Climbing"> </Column>
-            <Column field="HRtoWatts" header="HR:Watts"> </Column>
-            <Column field="HRtoSpeed" header="HR:Speed"> </Column>
-            <Column field="HRtoDistance" header="HR:Distance"> </Column>
-            <Column field="ClimbingToDistance" header="% Climbing:Distance"> </Column>
+        <div class="mt-8 ml-8 text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Tabulated data per {{ selectedTimePeriod }}</div>
+        <DataTable :value="dataset" size="small" stripedRows scrollable scrollHeight="580px" class="pt-4 ml-8 mr-8">
+        
+            <template #empty> No data available.</template>
+            <template #loading> Loading data. Please wait. </template>
+
+            <Column field="groupby" header="Period" frozen sortable> </Column>
+            <Column field="Distance" header="Avg Distance" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="Speed" header="Avg Speed" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="AverageHR" header="Avg Heart Rate" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="Watts" header="Avg Watts" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="Climbing" header="Avg Climbing" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="TotalDistance" header="Total Distance" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="TotalClimbing" header="Total Climbing" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="HRtoClimbing" header="Ratio HR to Climbing" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="HRtoWatts" header="Ratio HR to Watts" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="HRtoSpeed" header="Ratio HR to Speed" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="HRtoDistance" header="Ratio HR to Distance" sortable style="text-align: right;min-width: 100px" > </Column>
+            <Column field="ClimbingToDistance" header="% Climbing to Distance" sortable style="text-align: right;min-width: 100px" > </Column>
         </DataTable>
     </div>
 </template>

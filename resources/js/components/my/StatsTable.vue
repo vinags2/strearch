@@ -195,7 +195,7 @@ function fill_statsTableData(data:any) {
 </script>
 <template>
     <div>
-        <DataTable :value="statsTableData" size="small" stripedRows style="width: 40%;" scrollable scrollHeight="580px" :loading="loading" >
+        <DataTable :value="statsTableData" size="small" stripedRows style="width: 40%;" scrollable scrollHeight="580px" :loading="loading" class="ml-8">
             <Column field="col1" header="Statistic" style="width: 50%">
                 <template #body="{ data }">
                     <div v-if="data.col2 && data.col2 == 'bold'" class="flex font-bold items-center gap-2">

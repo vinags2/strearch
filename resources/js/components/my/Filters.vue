@@ -38,7 +38,7 @@ const save_filters = () => {
 </script>
 
 <template>
-    <div class="">
+    <div class="ml-8">
         <Select
             @change="onChangeOfFilter"
             v-model="activeFilter"
