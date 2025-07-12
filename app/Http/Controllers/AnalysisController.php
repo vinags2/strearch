@@ -133,14 +133,27 @@ class AnalysisController extends Controller
         return $dataset;
     }
 
+    // timePeriods = [
+    //     {id: 0, name: 'Year'},
+    //     {id: 1, name: 'Half Year'},
+    //     {id: 2, name: 'Every 3 months'},
+    //     {id: 3, name: 'Month'},
+    // ]
     private function addGroupByColumn($timeperiod)
     {
         switch ($timeperiod) {
-            case 1: return "concat(strftime('%Y', start_date_local ), '_',floor((strftime('%m', start_date_local)-1)/6)+1) as `groupby`";
-            case 2: return "concat(strftime('%Y', start_date_local ), '_',floor((strftime('%m', start_date_local)-1)/3)+1) as `groupby`";
-            case 3: return "concat(strftime('%Y', start_date_local ), '_',floor((strftime('%m', start_date_local)-1)/1)+1) as `groupby`";
-            default: return "strftime('%Y', start_date_local ) as groupby";
+            case 1: $groupByString = "concat(strftime('%Y', start_date_local ), '_',floor((strftime('%m', start_date_local)-1)/6)+1)";
+                break;
+            case 2: $groupByString = "concat(strftime('%Y', start_date_local ), '_',floor((strftime('%m', start_date_local)-1)/3)+1)";
+                break;
+            case 3: $groupByString = "concat(strftime('%Y', start_date_local ), '_',strftime('%m', start_date_local))";
+                break;
+            default: $groupByString = "strftime('%Y', start_date_local )";
+
         }
+        $groupByString .= " as 'groupby'";
+
+        return $groupByString;
     }
 
     private function getChartOptions($analysisIds)
