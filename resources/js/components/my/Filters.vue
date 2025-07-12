@@ -7,7 +7,7 @@ import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 
-import { CircleX, Save, Check } from 'lucide-vue-next';
+import { CircleX, Save } from 'lucide-vue-next';
 
 import { useStrearchData } from '@/stores/StrearchStore';
 import { storeToRefs } from 'pinia'
@@ -86,8 +86,12 @@ const save_filters = () => {
             <span class="text-red-500 text-sm" v-if="strearchData.indexOfFilterWithName(filterName) >= 0">Warning: this filter already exists and will be overwritten</span>
         </div>
         <div class="flex justify-end gap-2">
-            <a href="" @click.prevent="askForFilterName = false"><Button class="bg-blue-400 hover:bg-blue-700 text-white font-bold rounded" unstyled><CircleX color="red"></CircleX>Cancel</Button></a>
-            <a href="" @click.prevent="save_filters" v-if="filterNameNotEmpty"><Button class="bg-blue-400 hover:bg-blue-700 text-white font-bold rounded" unstyled><Check color="green"></Check>OK</Button></a>
+            <a href="" @click.prevent="askForFilterName = false">
+                <Button severity="info" class=""> Cancel </Button>
+            </a>
+            <a href="" @click.prevent="save_filters" v-if="filterNameNotEmpty">
+                <Button severity="info" class=""> OK </Button>
+            </a>
         </div>
     </Dialog>
 </template>

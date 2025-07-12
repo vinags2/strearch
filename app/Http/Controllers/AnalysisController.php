@@ -180,7 +180,7 @@ class AnalysisController extends Controller
             $data[] = $this->getRowData($row, $analysisIds[1]);
             $data2[] = $this->getRowData($row, $analysisIds[2]);
         }
-        $basic_dataset = ['pointStyle' => 'rect', 'pointRadius' => 7, 'pointHoverRadius' => 15, 'fill' => false, 'tension' => 0.4];
+        $basic_dataset = ['pointStyle' => 'rect', 'pointRadius' => 7, 'pointHoverRadius' => 15, 'fill' => false, 'tension' => 0.1];
         $dataset1 = array_merge($basic_dataset, ['label' => $this->getLabel($analysisIds[1]), 'data' => $data, 'yAxisID' => 'A', 'borderColor' => 'rgb(75, 192, 192)']);
         $dataset2 = array_merge($basic_dataset, ['label' => $this->getLabel($analysisIds[2]), 'data' => $data2, 'yAxisID' => 'B', 'borderColor' => 'rgb(255, 0, 127)']);
 
