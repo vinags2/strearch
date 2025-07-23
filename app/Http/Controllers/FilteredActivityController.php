@@ -66,6 +66,7 @@ class FilteredActivityController extends Controller
                 'max_heartrate' => $activity['max_heartrate'] ?? null,
                 'suffer_score' => $activity['suffer_score'] ?? null,
                 'moving_time' => $activity['moving_time'] ?? null,
+                'user_id' => auth()->user()->id,
             ]
         );
     }

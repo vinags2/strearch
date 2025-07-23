@@ -12,14 +12,13 @@ use App\Http\Controllers\StravaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-    ]);
-})->name('home');
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', [
+//     ]);
+// })->name('home');
+Route::inertia('/', 'Welcome')->name('home');
 
-Route::get('/dashboard', function () {
-    return redirect()->route('home');
-})->name('dashboard');
+Route::get('/dashboard', [ActivityController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('statistics', [StatisticsController::class, 'index'])->middleware(['auth', 'verified'])->name('statistics');
 Route::get('athlete', [AthleteController::class, 'index'])->middleware(['auth', 'verified'])->name('athlete');

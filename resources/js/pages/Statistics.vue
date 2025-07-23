@@ -194,7 +194,10 @@ function fill_tableData(data: any) {
     <Head title="Statistics" />
 
     <Layout>
-        <div class="mb-8 px-8">
+        <div class="mb-16 mt-8 text-center text-gray-500" v-if="tableData[2]?.col3 == 'No athlete data'">
+            No data has been found. Please download your athlete data from Strava.
+        </div>
+        <div v-else>
             <p class="w-full py-8 text-xl font-semibold tracking-tight md:px-32">Statistics</p>
 
             <DataTable

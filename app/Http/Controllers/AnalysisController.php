@@ -125,8 +125,11 @@ class AnalysisController extends Controller
 
         $selectStatement .= $this->addGroupByColumn($timeperiod);
 
+        $whereStatement = 'user_id = '.auth()->user()->id;
+
         $dataset = FilteredActivity::groupBy('groupby')
             ->selectRaw($selectStatement)
+            ->whereRaw($whereStatement)
             ->orderBy('groupby')
             ->get();
 

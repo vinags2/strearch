@@ -147,7 +147,7 @@ class StatisticsController extends Controller
                 'averageAscent' => round($lastYearVirtualActivities->f),
             ],
             'numberOfFilters' => Filter::count(),
-            'date_of_last_athlete_strava_update' => $athlete->updated_at,
+            'date_of_last_athlete_strava_update' => $athlete->updated_at ?? 'No athlete data',
             'date_of_last_activities_strava_update' => Setting::last_activities_update_from_strava(),
         ],
             201

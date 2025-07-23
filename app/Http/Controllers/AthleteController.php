@@ -99,7 +99,7 @@ class AthleteController extends Controller
 
         return response()->json([
             'athlete' => $athlete ?? false,
-            'date_of_last_athlete_strava_update' => $athlete->updated_at,
+            'date_of_last_athlete_strava_update' => $athlete->updated_at ?? 'no athlete data',
         ],
             201
         );
