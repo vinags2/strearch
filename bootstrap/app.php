@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'registeredWithStrava' => \App\Http\Middleware\RegisteredWithStrava::class,
+        ]);
         $middleware->encryptCookies(except: ['appearance']);
 
         $middleware->web(append: [
