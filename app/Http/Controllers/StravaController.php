@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Models\Strava;
 use App\Traits\Utilities;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class StravaController extends Controller
 {
@@ -30,11 +31,20 @@ class StravaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store($token)
+    public function store($access_token, $refresh_token)
     {
-        $strava = Strava::first() ?? new Strava;
-        $strava->authentication_token = $token;
-        $strava->save();
+        // Validate the access token and refresh token
+        if (empty($access_token) || empty($refresh_token)) {
+            return response()->json(['error' => 'Invalid access token or refresh token'], 400);
+        }
+
+        Strava::updateOrCreate(
+            ['user_id' => auth()->user()->id],
+            [
+                'authentication_token' => $access_token,
+                'refresh_token' => $refresh_token,
+            ]
+        );
 
         return response()->json(['status' => 'Token saved successfully'], 201);
     }
@@ -92,6 +102,21 @@ class StravaController extends Controller
                 'activities_url' => 'https://www.strava.com/api/v3/athlete/activities',
                 'date_of_last_activity_update' => Setting::last_activities_update_from_strava_as_unix_timestamp()],
             201
+            // ['The Strava API is not yet implemented in this version of Strearch.'],
+            // 501
         );
+    }
+
+    public function sendErrorNotification(Request $request)
+    {
+        Mail::to(env('MAIL_TO_FOR_ERRORS', 'retired@gregvinall.com'))
+            ->send(new \App\Mail\ErrorNotification(
+                $request->input('flag'),
+                $request->input('error_code'),
+                implode(', ', $request->input('error_response')),
+                $request->input('error_message')
+            ));
+
+        return response()->json(['status' => 'Error notification sent'], 200);
     }
 }

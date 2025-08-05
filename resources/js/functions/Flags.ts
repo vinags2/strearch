@@ -1,36 +1,149 @@
+import axios from 'axios';
 import { ref } from 'vue';
-// format of strava_data: {'code': an integer, 'data', the activities as an array of objects}
+// format of strava_data:
+// {'code': an integer,
+// 'data', the activities, athlete as an array of objects,
+// error = true if there was an error}
+
 // 'code' can take the following values:
-// 1 = successful return of data
-// 2 = prepare to get data from Strava
-// 3 = missing authorization data to access Strava
+// 1 = successful retrieved athlete data from Strava
+// 2 = the access token saved to the DB
+// 3 = getting authorization data to access Strava from Laravel
 // 4 = Too many attempts trying to authorise, or other error, with Strava
-// 6 = Athlete data has been saved to the database
-// 7 = Athlete data has NOT been saved to the database
-// 8 = Activities data has been saved to the database
-// 9 = Activities data has NOT been saved to the database
-// 10 = Activities have been downloaded from Strava and saved to the database.
-export const strava_data = ref({code:0, data:['no data']})
-
-// format of strearch_data: {'code': an integer, 'data', the activities as an array of objects}
-// 'code' can take the following values:
-// 8 = Stats downloaded from Strearch
-// 9 = Stats was unable to be downloaded from Strearch
-// 10 = Athlete data has been uploaded from the DB
-// 11 = Athlete data was NOT uploaded from the DB
+// 5 = Too many attempts trying to authorise, or other error, with Strava
+// 8 = Stats uploaded from Laravel
+// 9 = Activities data has been saved to the database
+// 10 = A (Strava) page of Activities has been downloaded from Strava
+// 11 = Athlete data has been uploaded from the DB
 // 12 = Activities data has been uploaded from the DB
-// 13 = Activities data was NOT uploaded from the DB
 // 14 = Filter data has been uploaded from the DB
-// 15 = Filter data was NOT uploaded from the DB
 // 16 = Filters data has been saved to the DB
-// 17 = Filters data was NOT saved to the DB
 // 18 = Filter deleted from the DB
-// 19 = Filter NOT deleted from the DB
-// 20 = Filter set active
-// 21 = Filter NOT set active
 // 22 = Chart Data uploaded from Laravel
-// 23 = Chart Data NOT uploaded from Laravel
-export const strearch_data = ref({code:0, data:'no data'})
 
-// (do not) show debug messages
-export let debug = true
+interface WatchData {
+    code: number;
+    data: any;
+    error?: boolean;
+}
+export const API_data = ref<WatchData>({ code: 0, data: [], error: false });
+
+// (do not) show debug messages in the console
+export let debug = true;
+let butStillLogErrors = true;
+
+// error messages when there are errors with API calls to Laravel or Strav
+export const error_message = (flag: number = 0, error: boolean = false) => {
+    if (error) {
+        switch (flag) {
+            case 1:
+                return 'There was an error retrieving the athlete data from Strava.';
+            case 2:
+                return 'There was an error saving the access token to Laravel.';
+            case 3:
+                return 'There was an error retrieving the authorization data for Strava.';
+            case 4:
+            case 5:
+                return 'There was an error authorizing with Strava.';
+            case 8:
+                return 'There was an error uploading the Stats data from Laravel.';
+            case 9:
+                return 'There was an error saving the activities to Laravel.';
+            case 10:
+                return 'There was an error retrieving the activities data from Strava.';
+            case 11:
+                return 'There was an error retrieving the athlete data from Strava.';
+            case 12:
+                return 'There was an error retrieving the activities data from Laravel.';
+            case 14:
+                return 'There was an error retrieving the filters from Laravel.';
+            case 16:
+                return 'There was an error saving the filters to Laravel.';
+            case 18:
+                return 'There was an error deleting a filter from Laravel.';
+            case 22:
+                return 'There was an error uploading the Chart data from Laravel.';
+            default:
+                return 'An unknown error occurred. (flag = ' + flag + ')';
+        }
+    } else {
+        switch (flag) {
+            case 1:
+                return 'Athlete data from Strava retrieved successfully.';
+            case 2:
+                return 'The access token has been saved to Laravel successfully.';
+            case 3:
+                return 'Authorization data for Strava retrieved successfully.';
+            case 4:
+            case 5:
+                return 'Successfully authorized with Strava.';
+            case 8:
+                return 'The Stats data has been uploaded from Laravel successfully.';
+            case 9:
+                return 'The activities have been saved to Laravel successfully.';
+            case 10:
+                return 'Activities data from Strava retrieved successfully.';
+            case 11:
+                return 'Athlete data from Strava retrieved successfully.';
+            case 12:
+                return 'Activities data from Laravel retrieved successfully.';
+            case 14:
+                return 'The filters have been uploaded from Laravel.';
+            case 16:
+                return 'The filters have been saved to Laravel.';
+            case 18:
+                return 'A filter has been deleted from Laravel.';
+            case 22:
+                return 'The Chart data has been uploaded from Laravel successfully.';
+            default:
+                return 'An unknown flag was returned.(' + flag + ')';
+        }
+    }
+};
+
+export function log2Console({ flag, error = false }: any) {
+    if (debug || (butStillLogErrors && error)) {
+        console.log(error_message(flag, error));
+    }
+}
+
+export function sendErrorNotifiction(flag: number, error_code: string = '', error_response: any = '') {
+    log2Console({ flag: flag, error: true });
+    const route_to_notify_error = route('error.notification');
+    try {
+        axios.post(route('error.notification'), {
+            flag: flag,
+            error_code: error_code,
+            error_response: error_response,
+            error_message: error_message(flag, true),
+        });
+        if (debug) console.log('Error notification to the developer sent successfully');
+    } catch (error) {
+        if (debug) {
+            console.log('There was an error sending the error notification to the developer. Error = ', error);
+            console.log('The route used to send the error notification is = ', route_to_notify_error);
+            console.log('error = ', error);
+        }
+    }
+}
+
+// Get/Post data using axios, and report errors if they occur
+export async function async_axios({ url, flag, method = 'get', post_data = '' }: any) {
+    let error = false;
+    let data;
+    try {
+        if (method == 'get') {
+            data = await axios.get(url);
+        } else {
+            data = await axios.post(url, post_data);
+        }
+        log2Console({ flag: flag });
+        API_data.value = { code: flag, data: data, error: error };
+        return { error: error, data: data.data };
+    } catch (axios_error: any) {
+        error = true;
+        sendErrorNotifiction(flag, axios_error.status, axios_error.response.data);
+        API_data.value = { code: flag, data: axios_error, error: error };
+        return { error: error, data: axios_error };
+    }
+}

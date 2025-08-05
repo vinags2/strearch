@@ -7,5 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Strava extends Model
 {
+    protected $guarded = [];
+
     use HasFactory;
 }

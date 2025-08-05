@@ -35,7 +35,9 @@ trait Utilities
 
     private function getRefreshToken()
     {
-        return env('STRAVA_REFRESH_TOKEN');
+        $strava = Strava::first() ?? new Strava;
+
+        return $strava->refresh_token ?? 'no refresh token saved';
     }
 
     private function getAthleteURL()

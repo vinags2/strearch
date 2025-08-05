@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppFooter from '@/components/AppFooter.vue';
 import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
-import { strearch_data } from '@/functions/Flags.js';
+import { API_data } from '@/functions/Flags.js';
 import { getStats } from '@/functions/StrearchAPI.js';
 import Layout from '@/layouts/my/Layout.vue';
 import { Head } from '@inertiajs/vue3';
@@ -27,7 +27,7 @@ const props = defineProps({
     },
 });
 
-watch(strearch_data, (newValue) => {
+watch(API_data, (newValue) => {
     if (newValue.code == 8) {
         fill_tableData(newValue.data);
     }

@@ -31,11 +31,11 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
     Route::patch('profile/preferences', [SettingController::class, 'update'])->name('preferences.update');
 
     // API routes to save data
-    Route::post('/strava/access_token/save/{token}', [StravaController::class, 'store'])->name('token.save');
+    Route::post('/strava/access_token/save/{access_token}/{refresh_token}', [StravaController::class, 'store'])->name('token.save');
+    Route::post('/strava/errrorNotification', [StravaController::class, 'sendErrorNotification'])->name('error.notification');
     Route::post('/athlete/save/{id}', [AthleteController::class, 'store'])->name('athlete.save');
     Route::post('/activities/save', [ActivityController::class, 'store'])->name('activities.save');
     Route::post('/activities/filtered/save', [FilteredActivityController::class, 'store'])->name('activities.filtered.save');
-    Route::get('/activities/filtered/save', [FilteredActivityController::class, 'store'])->name('activities.filtered.save2');
     Route::post('/filters/save', [FilterController::class, 'store_all'])->name('filters.save');
     Route::post('/chartdata/save', [AnalysisController::class, 'api_post'])->name('chartData.save');
 

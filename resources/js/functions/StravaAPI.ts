@@ -1,128 +1,96 @@
-import axios from 'axios';
-import { saveAccessToken, save_athlete, save_activities } from '@/functions/StrearchAPI.js'
-import { strava_data, debug } from '@/functions/Flags.js'
+import { API_data, async_axios, sendErrorNotifiction } from '@/functions/Flags.js';
+import { saveAccessToken, save_activities, save_athlete } from '@/functions/StrearchAPI.js';
 
-export function getStravaData(downloadWhat: string, parameters = '') {
+let athlete_url: string;
+let activities_url: string;
+let saved_access_token: string;
+let saved_refresh_token: string;
+let client_id: string;
+let client_secret: string;
+let date_of_last_activity_update: number;
 
-    var client_id = ''
-    var client_secret = ''
-    var refresh_token = ''
-    var athlete_url = ''
-    var activities_url = ''
-    var saved_access_token = ''
-    var date_of_last_activity_update = 0
-
-    const getStravaMetaData = async () => {
-        try {
-            const request = await axios.get(route('dfsd'));
-            if ( debug ) console.log('Successfully uploaded the data from the DB needed for downloading from Strava, such as the client id. '
-                +'data = ', request.data)
-            client_id = request.data.client_id
-            client_secret = request.data.client_secret
-            refresh_token = request.data.refresh_token
-            athlete_url = request.data.athlete_url
-            activities_url = request.data.activities_url
-            date_of_last_activity_update = request.data.date_of_last_activity_update
-        } catch (error) {
-            if ( debug ) console.log('There was an error getting the data from the DB needed for downloading from Strava, such as the client id ' +
-                'Error = ', error)
-            strava_data.value = {'code': 3, 'data': ['Missing authorization codes to access Strava']}
-        }
+async function getStravaMetaData() {
+    const ret = await async_axios({ url: route('dfsd'), flag: 3 });
+    if (ret.error) {
+        return false;
     }
-
-    var API_number_of_calls = 0
-
-    const getAthleteData = async () => {
-            API_number_of_calls++
-            if (API_number_of_calls > 2) {
-                strava_data.value = {'code': 4, 'data': ['Too many attempts trying to authorise with Strava']}
-                if ( debug ) console.log('Too many attempts trying to authorise with Strava')
-                return
-            } else {
-
-                let full_url = createUrl(athlete_url, parameters, saved_access_token)
-                try {
-                    const request = await axios.get(full_url);
-                    if ( debug ) {
-                        console.log('Data retrieved from Strava successfully')
-                        console.log('url = ', full_url)
-                        console.log('Data = ', request.data)
-                    }
-                    strava_data.value = {'code': 1, 'data': request.data}
-                    save_athlete(request.data)
-                } catch (error) {
-                    if ( debug ) console.log('Data was NOT retrieved from Strava successfully.')
-                    if ( debug ) console.log('Error = ', error)
-                    authoriseWithStrava()
-                }
-            }
-      };
-
-    const getActivitiesData = async (all: boolean) => {
-            API_number_of_calls++
-            if (API_number_of_calls > 2) {
-                strava_data.value = {'code': 4, 'data': ['Too many attempts trying to authorise with Strava']}
-                if ( debug ) console.log('Too many attempts trying to authorise with Strava')
-            } else {
-                let pageNo = 1
-                let moreData = true
-                do {
-                    // parameters = 'after='+'2025-03-01 16:57:45'+'&per_page=200&page='+pageNo
-                    // parameters = 'after='+last_update_from_strava.value+'&per_page=200&page='
-                    parameters = all ? 'after=1&per_page=200&page='+pageNo++ : 'after='+date_of_last_activity_update+'&per_page=200&page='+pageNo++
-                    // parameters = 'after='+'1740808620'+'&per_page=200&page='+pageNo++
-                    let full_url = createUrl(activities_url, parameters, saved_access_token)
-                    try {
-                        const request = await axios.get(full_url);
-                        if ( debug ) {
-                            console.log('Data retrieved from Strava successfully - page ', pageNo - 1)
-                            console.log('url = ', full_url)
-                            console.log('data = ', request.data)
-                            console.log('pageNo = ', pageNo - 1, 'moreData = ', moreData)
-                        }
-                        moreData = request?.data.length > 0
-                        // strava_data.value = {'code': 1, 'data': request.data}
-                        save_activities(request.data)
-                    } catch (error) {
-                        if ( debug ) console.log('Data was NOT retrieved from Strava successfully.')
-                        if ( debug ) console.log('Error = ', error)
-                        authoriseWithStrava()
-                    }
-                } while (moreData && (pageNo < 30))
-                strava_data.value = {'code': 10, 'data': ['new activities have been downloaded from Strava and saved to the DB']}
-            }
-      };
-
-
-    const authoriseWithStrava = async () => {
-        await getStravaMetaData()
-
-        let full_url = 'https://www.strava.com/api/v3/oauth/token?client_id='+client_id+'&client_secret='+client_secret+'&grant_type=refresh_token&refresh_token='+refresh_token
-        try {
-            const request = await axios.post(full_url);
-            saved_access_token = request.data.access_token
-            if ( debug ) {
-                console.log('Authorised with Strava successfully')
-            }
-            saveAccessToken(saved_access_token)
-            if (downloadWhat == 'athlete') {
-                getAthleteData()
-            } else {
-                getActivitiesData(downloadWhat == 'All Activities')
-            }
-        } catch (error) {
-            if ( debug ) {
-                console.log('Error re-authorising with Strava.', error)
-                console.log('url = ', full_url)
-            }
-            strava_data.value = {'code': 4, 'data': ['Error re-authorising with Strava']}
-        }
-      };
-
-    authoriseWithStrava()
-
+    athlete_url = ret.data.athlete_url;
+    activities_url = ret.data.activities_url;
+    client_id = ret.data.client_id;
+    client_secret = ret.data.client_secret;
+    saved_refresh_token = ret.data.refresh_token;
+    date_of_last_activity_update = ret.data.date_of_last_activity_update;
+    return true;
 }
 
-function createUrl(url:string, parameters:string, saved_access_token:string) {
-   return url + '?access_token=' + saved_access_token + (parameters ? '&' + parameters : '')
+async function getActivitiesData(all: boolean = false) {
+    let pageNo = 1;
+    let moreData = true;
+    const per_page = 200;
+    let ret: any;
+    const after = all ? 1 : date_of_last_activity_update;
+    do {
+        let parameters = `after=${after}&per_page=${per_page}&page=${pageNo++}`;
+        let full_url = createUrl(activities_url, parameters);
+        ret = await async_axios({ url: full_url, flag: 10 });
+        if (ret?.error) {
+            moreData = false;
+        } else {
+            moreData = ret?.data.length > 0;
+            if (moreData) await save_activities(ret.data);
+        }
+        // pageNo < 30 is there to prevent infinite loops in case Strava API does not return an end of data.
+        // The implication is that if there are more than 6000 activities, the code will not work correctly.
+    } while (moreData && pageNo < 30);
+    return !ret.error;
+}
+
+async function getAthleteData() {
+    let full_url = createUrl(athlete_url);
+    const ret = await async_axios({ url: full_url, flag: 1 });
+    if (!ret.error) {
+        await save_athlete(ret.data);
+    }
+    return !ret.error;
+}
+
+async function authoriseWithStrava(downloadWhat: string = 'athlete') {
+    if (!(await getStravaMetaData())) return false;
+
+    let full_url =
+        'https://www.strava.com/api/v3/oauth/token?client_id=' +
+        client_id +
+        '&client_secret=' +
+        client_secret +
+        '&grant_type=refresh_token&refresh_token=' +
+        saved_refresh_token;
+
+    let ret = await async_axios({ url: full_url, flag: 4, method: 'post' });
+    if (ret.error) {
+        return false;
+    }
+
+    saved_access_token = ret.data.access_token;
+    saved_refresh_token = ret.data.refresh_token;
+
+    await saveAccessToken(saved_access_token, saved_refresh_token);
+    return true;
+}
+
+export async function getStravaData(downloadWhat: string) {
+    if (!(await authoriseWithStrava(downloadWhat))) return;
+    let API_number_of_calls = 0;
+    while (++API_number_of_calls < 3) {
+        if (downloadWhat == 'athlete') {
+            if (await getAthleteData()) return;
+        } else {
+            if (await getActivitiesData(downloadWhat == 'All Activities')) return;
+        }
+    }
+    API_data.value = { code: 5, data: ['Too many attempts trying to authorise with Strava'], error: true };
+    sendErrorNotifiction(5, '0', 'Too many attempts trying to authorise with Strava');
+}
+
+function createUrl(url: string, parameters: string = '') {
+    return url + '?access_token=' + saved_access_token + (parameters ? '&' + parameters : '');
 }

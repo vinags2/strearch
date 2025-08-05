@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
-import { strearch_data } from '@/functions/Flags.js';
+import { API_data } from '@/functions/Flags.js';
 import { getAthlete } from '@/functions/StrearchAPI.js';
 import Layout from '@/layouts/my/Layout.vue';
 import { Head } from '@inertiajs/vue3';
@@ -8,9 +8,9 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import { onMounted, ref, watch } from 'vue';
 
-watch(strearch_data, (newValue) => {
-    if (newValue.code == 10) {
-        fill_fields(newValue.data);
+watch(API_data, (newValue) => {
+    if (newValue.code == 11) {
+        fill_fields(newValue.data.data);
     }
 });
 

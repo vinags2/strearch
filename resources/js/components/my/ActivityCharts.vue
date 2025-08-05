@@ -7,7 +7,7 @@ import DataTable from 'primevue/datatable';
 import Select from 'primevue/select';
 import { onMounted, ref, watch } from 'vue';
 
-import { strearch_data } from '@/functions/Flags';
+import { API_data } from '@/functions/Flags';
 import { getChartData } from '@/functions/StrearchAPI';
 import { useStrearchData } from '@/stores/StrearchStore.js';
 import { storeToRefs } from 'pinia';
@@ -25,7 +25,7 @@ const chartData = ref();
 const timeperiod = ref();
 const activeanalysisids = ref();
 
-watch(strearch_data, (newValue) => {
+watch(API_data, (newValue) => {
     if (newValue.code == 22) {
         create_chart(newValue.data);
     }
