@@ -76,14 +76,14 @@ export const useStrearchData = defineStore('strearchData', {
                 }
                 this.filters = ret.data.filters;
                 this.convertAPIFiltertoJStypes();
-                this.setActiveFilter();
+                this.setActiveFilter(false);
                 this.findMaxFilterId();
             }
         },
 
         async initActivities(force = false) {
             if (this.activities.length == 0 || force) {
-                const ret = await async_axios({ url: route('activities.get'), flag: 14 });
+                const ret = await async_axios({ url: route('activities.get'), flag: 12 });
                 this.activities = ret.data.activities;
                 this.sportTypes = ret.data.sportTypes;
                 this.stringToDate();
@@ -155,13 +155,13 @@ export const useStrearchData = defineStore('strearchData', {
 
         // Save the Filters to the DB
         async saveFilteredActivities() {
-            const ret = await async_axios({ url: route('activities.filtered.save'), flag: 14, method: 'post', post_data: this.filteredActivities });
+            const ret = await async_axios({ url: route('activities.filtered.save'), flag: 13, method: 'post', post_data: this.filteredActivities });
             // const res = await axios.post(route('activities.filtered.save'), this.filteredActivities);
             this.filteredActivitiesFlag = !this.filteredActivitiesFlag;
         },
 
         // Set the Active Filter and it's dependencies, searching for the filter where active = 1
-        setActiveFilter() {
+        setActiveFilter(withSave = true) {
             var i = 0;
             this.activeFilterIndex = -1;
             this.activeFilter = this.newFiltersElement;
@@ -173,7 +173,7 @@ export const useStrearchData = defineStore('strearchData', {
                 i++;
             });
             this.justTheFilter = this.activeFilter.filter;
-            this.saveFiltersActually();
+            if (withSave) this.saveFiltersActually();
         },
 
         // Change the Active Filter to what has been set in the variable ActiveFilter

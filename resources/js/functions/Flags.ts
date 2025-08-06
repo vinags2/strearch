@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ref } from 'vue';
-// format of strava_data:
+// format of API_data:
 // {'code': an integer,
 // 'data', the activities, athlete as an array of objects,
 // error = true if there was an error}
@@ -16,6 +16,7 @@ import { ref } from 'vue';
 // 10 = A (Strava) page of Activities has been downloaded from Strava
 // 11 = Athlete data has been uploaded from the DB
 // 12 = Activities data has been uploaded from the DB
+// 13 = Filtered Activities data has been saved to the database
 // 14 = Filter data has been uploaded from the DB
 // 16 = Filters data has been saved to the DB
 // 18 = Filter deleted from the DB
@@ -32,7 +33,7 @@ export const API_data = ref<WatchData>({ code: 0, data: [], error: false });
 export let debug = true;
 let butStillLogErrors = true;
 
-// error messages when there are errors with API calls to Laravel or Strav
+// error messages when there are errors with API calls to Laravel or Strava
 export const error_message = (flag: number = 0, error: boolean = false) => {
     if (error) {
         switch (flag) {
@@ -55,6 +56,8 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
                 return 'There was an error retrieving the athlete data from Strava.';
             case 12:
                 return 'There was an error retrieving the activities data from Laravel.';
+            case 13:
+                return 'There was an error saving the filtered activities data to Laravel.';
             case 14:
                 return 'There was an error retrieving the filters from Laravel.';
             case 16:
@@ -87,6 +90,8 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
                 return 'Athlete data from Strava retrieved successfully.';
             case 12:
                 return 'Activities data from Laravel retrieved successfully.';
+            case 13:
+                return 'The filtered activities data has been saved to Laravel.';
             case 14:
                 return 'The filters have been uploaded from Laravel.';
             case 16:
@@ -128,7 +133,7 @@ export function sendErrorNotifiction(flag: number, error_code: string = '', erro
 }
 
 // Get/Post data using axios, and report errors if they occur
-export async function async_axios({ url, flag, method = 'get', post_data = '' }: any) {
+export async function async_axios({ url, flag, method = 'get', post_data = '', feedback = false }: any) {
     let error = false;
     let data;
     try {
@@ -138,12 +143,12 @@ export async function async_axios({ url, flag, method = 'get', post_data = '' }:
             data = await axios.post(url, post_data);
         }
         log2Console({ flag: flag });
-        API_data.value = { code: flag, data: data, error: error };
+        if (feedback) API_data.value = { code: flag, data: data, error: error };
         return { error: error, data: data.data };
     } catch (axios_error: any) {
         error = true;
         sendErrorNotifiction(flag, axios_error.status, axios_error.response.data);
-        API_data.value = { code: flag, data: axios_error, error: error };
+        if (feedback) API_data.value = { code: flag, data: axios_error, error: error };
         return { error: error, data: axios_error };
     }
 }

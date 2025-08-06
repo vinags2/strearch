@@ -78,17 +78,28 @@ async function authoriseWithStrava(downloadWhat: string = 'athlete') {
 }
 
 export async function getStravaData(downloadWhat: string) {
-    if (!(await authoriseWithStrava(downloadWhat))) return;
+    let error_string: string = 'athlete';
+    if (!(await authoriseWithStrava(downloadWhat))) {
+        API_data.value = { code: 3, data: ['There was an error authorising with Strava.'], error: true };
+        return;
+    }
     let API_number_of_calls = 0;
     while (++API_number_of_calls < 3) {
         if (downloadWhat == 'athlete') {
-            if (await getAthleteData()) return;
+            if (await getAthleteData()) {
+                API_data.value = { code: 1, data: ['Athlete data downloaded from Strava successfully'], error: false };
+                return;
+            }
         } else {
-            if (await getActivitiesData(downloadWhat == 'All Activities')) return;
+            error_string = 'activities';
+            if (await getActivitiesData(downloadWhat == 'All Activities')) {
+                API_data.value = { code: 10, data: ['Activities data downloaded from Strava successfully'], error: false };
+                return;
+            }
         }
     }
-    API_data.value = { code: 5, data: ['Too many attempts trying to authorise with Strava'], error: true };
-    sendErrorNotifiction(5, '0', 'Too many attempts trying to authorise with Strava');
+    API_data.value = { code: 5, data: ['There was an error downloading the ' + error_string + ' data.'], error: true };
+    sendErrorNotifiction(5, '0', ['Too many attempts trying to authorise with Strava']);
 }
 
 function createUrl(url: string, parameters: string = '') {

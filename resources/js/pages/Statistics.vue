@@ -29,7 +29,7 @@ const props = defineProps({
 
 watch(API_data, (newValue) => {
     if (newValue.code == 8) {
-        fill_tableData(newValue.data);
+        fill_tableData(newValue.data.data);
     }
 });
 

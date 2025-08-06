@@ -6,15 +6,15 @@ export async function saveAccessToken(saved_access_token: string, saved_refresh_
 }
 
 export async function getStats() {
-    await async_axios({ url: route('stats'), flag: 8 });
+    await async_axios({ url: route('stats'), flag: 8, feedback: true });
 }
 
 export async function getChartData() {
-    await async_axios({ url: route('chartData.get'), flag: 22 });
+    await async_axios({ url: route('chartData.get'), flag: 22, feedback: true });
 }
 
 export async function getAthlete() {
-    await async_axios({ url: route('athlete.get'), flag: 11 });
+    await async_axios({ url: route('athlete.get'), flag: 11, feedback: true });
 }
 
 export async function save_athlete(athlete: any) {

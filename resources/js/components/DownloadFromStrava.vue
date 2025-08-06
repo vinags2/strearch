@@ -5,7 +5,6 @@ import { Download } from 'lucide-vue-next';
 import Button from 'primevue/button';
 import { computed, defineEmits, onMounted, ref, watch } from 'vue';
 
-import { useStrearchData } from '@/stores/StrearchStore';
 import Dialog from 'primevue/dialog';
 
 const props = defineProps({
@@ -39,11 +38,12 @@ const showError = ref(false);
 const textForAlertDescription = ref('Please wait while the informaton from Strava is being downloaded');
 const textForAlertHeader = ref('Downloading ' + whatToDownload.value + ' information');
 const tip = ref('Update ' + whatToDownload.value + ' data');
-let errorShown: boolean = false;
+// let errorShown: boolean = false;
 
 watch(API_data, (newValue) => {
-    if ([1, 3, 4, 10, 12].includes(newValue.code)) {
-        showSuccessBeforeClosing(3, newValue.error == false);
+    if ([1, 3, 5, 10].includes(newValue.code)) {
+        API_data.value = { code: 0, data: ['Resetting API_data values.'], error: false };
+        showSuccessBeforeClosing(newValue.code, newValue.error == false);
     }
 });
 
@@ -51,20 +51,20 @@ function showDialog() {
     textForAlertDescription.value = 'Please wait while the informaton from Strava is being downloaded';
     textForAlertHeader.value = 'Downloading ' + whatToDownload.value + ' information';
     showClose.value = false;
-    errorShown = false;
+    // errorShown = false;
     showAlert.value = props.withDialog;
     getStravaData(props.downloadWhat);
 }
 
 function showSuccessBeforeClosing(flag: number, success: boolean = true) {
-    if (errorShown) {
-        return;
-    } else {
-        errorShown = true;
-    }
-    if (!useStrearchData().showAnotherErrorMessage) {
-        return;
-    }
+    // if (errorShown) {
+    //     return;
+    // } else {
+    //     errorShown = true;
+    // }
+    // if (!useStrearchData().showAnotherErrorMessage) {
+    //     return;
+    // }
     if (success) {
         textForAlertHeader.value = 'Information downloaded successfully';
         textForAlertDescription.value = 'The informaton from Strava has being downloaded successfully';
@@ -74,7 +74,7 @@ function showSuccessBeforeClosing(flag: number, success: boolean = true) {
         textForAlertDescription.value = error_message(flag, true);
         showAlert.value = true;
         showError.value = true;
-        errorShown = true;
+        // errorShown = true;
         emit('newdownload', 0);
     }
     showClose.value = true;

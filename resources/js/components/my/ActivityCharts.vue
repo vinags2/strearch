@@ -27,7 +27,7 @@ const activeanalysisids = ref();
 
 watch(API_data, (newValue) => {
     if (newValue.code == 22) {
-        create_chart(newValue.data);
+        create_chart(newValue.data.data);
     }
 });
 
