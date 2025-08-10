@@ -21,6 +21,10 @@ export async function save_athlete(athlete: any) {
     await async_axios({ url: route('athlete.save', athlete.id), flag: 6, method: 'post', post_data: athlete });
 }
 
+export async function save_activity(activity: any) {
+    await async_axios({ url: route('activity.save', activity.id), flag: 6, method: 'post', post_data: activity });
+}
+
 export async function save_activities(activities: any, filtered_activities: boolean = false) {
     let save_route = filtered_activities ? route('activities.filtered.save') : route('activities.save');
     await async_axios({ url: save_route, flag: 9, method: 'post', post_data: activities });

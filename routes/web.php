@@ -34,6 +34,7 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
     Route::post('/strava/access_token/save/{access_token}/{refresh_token}', [StravaController::class, 'store'])->name('token.save');
     Route::post('/strava/errrorNotification', [StravaController::class, 'sendErrorNotification'])->name('error.notification');
     Route::post('/athlete/save/{id}', [AthleteController::class, 'store'])->name('athlete.save');
+    Route::post('/activity/save/{activity}', [ActivityController::class, 'store_activity'])->name('activity.save');
     Route::post('/activities/save', [ActivityController::class, 'store'])->name('activities.save');
     Route::post('/activities/filtered/save', [FilteredActivityController::class, 'store'])->name('activities.filtered.save');
     Route::post('/filters/save', [FilterController::class, 'store_all'])->name('filters.save');
@@ -48,7 +49,12 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
     Route::get('/filter/delete/{id}', [FilterController::class, 'delete'])->name('filter.delete');
     Route::get('/filter/setactive/{id}', [FilterController::class, 'setActiveFilter'])->name('filter.setactive');
     Route::get('/chartdata/get', [AnalysisController::class, 'api_get'])->name('chartData.get');
+
+    // API routes to delete data
+    Route::delete('/activity/delete/{activity}', [ActivityController::class, 'destroy'])->name('activity.delete');
 });
+
+Route::get('/strava/authorization/stage2', [StravaController::class, 'authorization_stage2'])->name('strava.authorization.stage2');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

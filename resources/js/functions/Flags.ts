@@ -11,6 +11,7 @@ import { ref } from 'vue';
 // 3 = getting authorization data to access Strava from Laravel
 // 4 = Too many attempts trying to authorise, or other error, with Strava
 // 5 = Too many attempts trying to authorise, or other error, with Strava
+// 6 = successful retrieved an activity from Strava
 // 8 = Stats uploaded from Laravel
 // 9 = Activities data has been saved to the database
 // 10 = A (Strava) page of Activities has been downloaded from Strava
@@ -46,6 +47,8 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
             case 4:
             case 5:
                 return 'There was an error authorizing with Strava.';
+            case 6:
+                return 'There was an error retrieving an activity from Strava.';
             case 8:
                 return 'There was an error uploading the Stats data from Laravel.';
             case 9:
@@ -80,6 +83,8 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
             case 4:
             case 5:
                 return 'Successfully authorized with Strava.';
+            case 6:
+                return 'Successfully retrieved an activity from Strava.';
             case 8:
                 return 'The Stats data has been uploaded from Laravel successfully.';
             case 9:

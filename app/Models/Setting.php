@@ -21,6 +21,7 @@ class Setting extends Model
         return [
             'analysis_id' => 'array',
             'auto_update_activities' => 'boolean',
+            'show_viewinstrava_as_text' => 'boolean',
         ];
     }
 
@@ -81,6 +82,11 @@ class Setting extends Model
 
         return $sort['sort_direction'] == 'asc' ? 'desc' : 'asc';
 
+    }
+
+    public static function show_viewinstrava_as_text()
+    {
+        return Setting::first('show_viewinstrava_as_text')?->show_viewinstrava_as_text;
     }
 
     public static function auto_update_activities()

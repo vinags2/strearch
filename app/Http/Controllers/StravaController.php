@@ -50,6 +50,16 @@ class StravaController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     */
+    public function authorization_stage2(Request $request)
+    {
+        dd($request->all());
+
+        return response()->json(['expires at' => $request->input('expires_at'), 'all' => $request->all()], 201);
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(Strava $strava)
@@ -99,6 +109,7 @@ class StravaController extends Controller
                 'client_secret' => $this->getClientSecret(),
                 'refresh_token' => $this->getRefreshToken(),
                 'athlete_url' => 'https://www.strava.com/api/v3/athlete',
+                'activity_url' => 'https://www.strava.com/api/v3/activities',
                 'activities_url' => 'https://www.strava.com/api/v3/athlete/activities',
                 'date_of_last_activity_update' => Setting::last_activities_update_from_strava_as_unix_timestamp()],
             201

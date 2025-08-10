@@ -26,6 +26,7 @@ class ActivityController extends Controller
 
         return Inertia::render('Activities', [
             'autoUpdateActivities' => Setting::auto_update_activities(),
+            'showViewInStravaAsText' => Setting::show_viewinstrava_as_text(),
         ]);
 
     }
@@ -69,6 +70,14 @@ class ActivityController extends Controller
         (new SettingController)->saveDateOfActivitiesStore();
 
         return response()->json(['status' => 'Saving was successful'], 201);
+    }
+
+    public function store_activity(Activity $activity)
+    {
+        $this->store_one_activity(request()->all());
+
+        return response()->json(['status' => 'Saving was successful'], 201);
+
     }
 
     private function store_one_activity($activity)
@@ -168,7 +177,14 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity)
     {
-        //
+        if ($activity->delete() === false) {
+            return redirect()->back()->withErrors([
+                'errors' => 'Unable to delete the activity',
+            ]);
+        }
+
+        return redirect()->back();
+
     }
 
     public function api_get()

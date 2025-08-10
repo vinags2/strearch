@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo.vue';
+import PoweredByStravaIconSmall from '@/components/PoweredByStravaIconSmall.vue';
 import { router } from '@inertiajs/vue3';
 import { User } from 'lucide-vue-next';
 import Menubar from 'primevue/menubar';
@@ -42,6 +43,9 @@ const goProfile = () => {
 </script>
 
 <template>
+    <div class="absolute bottom-2 right-20">
+        <PoweredByStravaIconSmall></PoweredByStravaIconSmall>
+    </div>
     <div
         class="flex h-full min-h-screen flex-1 flex-col gap-4 rounded-xl border-b border-sidebar-border/80 bg-gradient-to-r from-cyan-200 to-blue-300 p-4"
     >
@@ -52,14 +56,16 @@ const goProfile = () => {
                 </div>
             </template>
             <template #end>
-                <div
-                    class="flex items-center gap-2"
-                    v-tooltip.left="{
-                        value: 'Logout, or change password or profile',
-                        pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' },
-                    }"
-                >
-                    <User class="cursor-pointer" @click="goProfile"></User>
+                <div class="items-center">
+                    <div
+                        class="flex items-center gap-2"
+                        v-tooltip.left="{
+                            value: 'Logout, or change password or profile',
+                            pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' },
+                        }"
+                    >
+                        <User class="cursor-pointer" @click="goProfile"></User>
+                    </div>
                 </div>
             </template>
         </Menubar>

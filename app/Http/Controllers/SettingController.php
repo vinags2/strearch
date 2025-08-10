@@ -20,6 +20,7 @@ class SettingController extends Controller
 
         return Inertia::render('settings/Preferences', [
             'autoUpdateActivities' => Setting::auto_update_activities(),
+            'showViewInStravaAsText' => Setting::show_viewinstrava_as_text(),
         ]);
     }
 
@@ -62,6 +63,7 @@ class SettingController extends Controller
     {
         return Inertia::render('settings/Preferences', [
             'autoUpdateActivities' => Setting::auto_update_activities(),
+            'showViewInStravaAsText' => Setting::show_viewinstrava_as_text(),
         ]);
     }
 
@@ -74,7 +76,8 @@ class SettingController extends Controller
 
         Setting::updateOrCreate(
             ['user_id' => $this->my('id')],
-            ['auto_update_activities' => $request->input('autoUpdateActivities')]
+            ['auto_update_activities' => $request->input('autoUpdateActivities'),
+                'show_viewinstrava_as_text' => $request->input('showViewInStravaAsText')]
         );
 
         //
