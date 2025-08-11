@@ -155,8 +155,7 @@ export const useStrearchData = defineStore('strearchData', {
 
         // Save the Filters to the DB
         async saveFilteredActivities() {
-            const ret = await async_axios({ url: route('activities.filtered.save'), flag: 13, method: 'post', post_data: this.filteredActivities });
-            // const res = await axios.post(route('activities.filtered.save'), this.filteredActivities);
+            await async_axios({ url: route('activities.filtered.save'), flag: 13, method: 'post', post_data: this.filteredActivities });
             this.filteredActivitiesFlag = !this.filteredActivitiesFlag;
         },
 

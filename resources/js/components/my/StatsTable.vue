@@ -244,7 +244,7 @@ function fill_statsTableData(data: any) {
             </Column>
 
             <Column field="col2" header="">
-                <template #body="{ data }"> </template>
+                <template #body=""> </template>
             </Column>
 
             <Column field="col3" header="Value" style="width: 50%">

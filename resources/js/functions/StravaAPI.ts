@@ -65,7 +65,7 @@ async function getAnActivity(id: number) {
     return !ret.error;
 }
 
-async function authoriseWithStrava(downloadWhat: string = 'athlete') {
+async function authoriseWithStrava() {
     if (!(await getStravaMetaData())) return false;
 
     let full_url =
@@ -91,7 +91,7 @@ async function authoriseWithStrava(downloadWhat: string = 'athlete') {
 // downloadWhat can equal 'athlete', 'activities', 'all activities', 'activity'
 export async function getStravaData(downloadWhat: string, id: number = 0) {
     let error_string: string = 'athlete';
-    if (!(await authoriseWithStrava(downloadWhat))) {
+    if (!(await authoriseWithStrava())) {
         API_data.value = { code: 3, data: ['There was an error authorising with Strava.'], error: true };
         return;
     }
