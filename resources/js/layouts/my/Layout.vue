@@ -33,10 +33,6 @@ const items = ref([
 
 const showLoading = ref(false);
 
-const goHome = () => {
-    window.location.href = route('home');
-};
-
 const goProfile = () => {
     window.location.href = route('profile.edit');
 };
@@ -52,7 +48,7 @@ const goProfile = () => {
         <Menubar style="background-image: linear-gradient(to right, #a2f4fd, #8ec5ff); border: none" :model="items">
             <template #start>
                 <div class="flex items-center gap-2">
-                    <AppLogo class="cursor-pointer" @click="goHome"></AppLogo>
+                    <AppLogo></AppLogo>
                 </div>
             </template>
             <template #end>

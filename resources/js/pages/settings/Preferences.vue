@@ -51,7 +51,7 @@ const submit = () => {
                             <input id="showViewInStravaAsText" type="checkbox" class="mt-2" v-model="form.showViewInStravaAsText" />
                         </div>
                         <div>
-                            <label class="ml-6" for="showViewInStravaAsText">Show 'View in Strava' as text</label>
+                            <label class="ml-6" for="showViewInStravaAsText">Show 'View on Strava' as text</label>
                         </div>
                         <div>
                             <InputError class="mt-2" :message="form.errors.showViewInStravaAsText" />
