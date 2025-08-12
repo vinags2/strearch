@@ -87,10 +87,6 @@ strearchData.initActivities();
 
 function get_activities() {
     autoUpdateComplete.value = true;
-    if (on_first_call_dont_initActivities) {
-        on_first_call_dont_initActivities = false;
-        return;
-    }
     strearchData.initActivities(true);
 }
 
