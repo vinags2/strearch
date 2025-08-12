@@ -6,7 +6,7 @@
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
   [![Laravel](https://img.shields.io/badge/Laravel-B73BFE?style=for-the-badge&logo=laravel&logoColor=FFD62E)](https://laravel.com/)
 
-  <img src="./public/favicon.png" width="400" alt="VueTris Gameplay">
+  <img src="./public/images/bicycle.svg" width="400" alt="strearch">
 </div>
 
 ## 🚀 Features
