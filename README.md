@@ -27,7 +27,7 @@
 'strearch' was developed as a personal project and not intended for further development. However, if you have an interest in forking 'strearch', 
 you are most welcome to do so.
 
-If you wish, contact me beforehand, and I will work on it being easier to fork. There will be things that will need to be done manually such as to create a database; I have
+If you wish, contact me beforehand (at [my email](mailto:05_tannest_taut@icloud.com)), and I will work on it being easier to fork. There will be things that will need to be done manually such as to create a database; I have
 not created the table creation files, but can do so if you are interested. The .env file will also need to be modified with your mail server details, the strava client id, etc.
 
 ## 📝 License
