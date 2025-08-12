@@ -77,8 +77,6 @@ function showSuccessBeforeClosing(flag: number, success: boolean = true) {
     }
 }
 
-let on_first_call_dont_initActivities = true;
-
 const autoUpdateComplete = ref(!props.autoUpdateActivities);
 
 const strearchData = useStrearchData();
