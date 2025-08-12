@@ -1,10 +1,12 @@
 <div align="center">
   <h1>🚲 strearch</h1>
-  <p>A tool for searching your Strava activities, built with Laravel, Vue 3 and Tailwind</p>
+  <p>A tool for searching your Strava activities and comparing your performance over time.</p>
+  <p>Built with PHP, Laravel, Vue 3 and Tailwind</p>
   
   [![Vue 3](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D)](https://v3.vuejs.org/)
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
   [![Laravel](https://img.shields.io/badge/Laravel-B73BFE?style=for-the-badge&logo=laravel&logoColor=FFD62E)](https://laravel.com/)
+  [![PHP](https://img.shields.io/badge/PHP-B73B00?style=for-the-badge&logo=php&logoColor=FFD62E)](https://php.net/)
 
   <img src="./public/images/bicycle.svg" width="400" alt="strearch">
 </div>
