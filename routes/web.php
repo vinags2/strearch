@@ -20,6 +20,10 @@ Route::inertia('/', 'Welcome')->name('home');
 
 Route::inertia('notRegistered', 'NotRegistered')->name('notRegistered');
 
+// Strava OAuth routes
+Route::get('auth/strava', [StravaController::class, 'redirect'])->name('strava.auth');
+Route::get('auth/strava/callback', [StravaController::class, 'callback']);
+
 Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function () {
     Route::get('/dashboard', [ActivityController::class, 'index'])->name('dashboard');
 

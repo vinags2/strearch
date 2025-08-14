@@ -3,7 +3,7 @@ import ConnectWithStravaIcon from '@/components/ConnectWithStravaIcon.vue';
 import { Head, router } from '@inertiajs/vue3';
 
 function registerWithStrava() {
-    window.alert('Not implemented yet.');
+    router.visit(route('strava.auth'));
 }
 </script>
 
