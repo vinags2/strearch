@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import ConnectWithStravaIcon from '@/components/ConnectWithStravaIcon.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
+
+const page = usePage();
 
 function registerWithStrava() {
     router.visit(route('strava.auth'));
@@ -18,6 +20,10 @@ function registerWithStrava() {
         <div class="w-250 max-w-lg justify-between">
             <div class="flex items-center justify-center space-x-2">
                 <h1 class="mb-4 justify-center text-xl font-bold">Welcome to strearch</h1>
+            </div>
+            <!-- Display error message if it exists -->
+            <div v-if="page.props.message" class="mb-4 rounded-lg bg-red-100 p-4 text-red-900 dark:bg-red-900/50 dark:text-red-200">
+                {{ page.props.message }}
             </div>
             <div class="mb-4">
                 'strearch' will allow you to search your Strava activities based on many factors, such as your heart rate, your power output, the
