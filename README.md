@@ -13,9 +13,10 @@
 
 ## 🚀 Features
 
-- Search your Strava activities based almost any metric:
+- Search your Strava activities based on almost any metric:
     - when the activity (such as a ride or run) occurred
     - your average heart rate, and/or your average watts, and/or your average cadence, and/or distance ridden, and/or etc
+    - for example, show all rides where average watts > 140 and average HR < 125 and distance > 50km
 - Save your searches for later
 - Graph your performance over time to see any trends in your performance, where you may:
     - compare average watts v average heart rate
