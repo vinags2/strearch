@@ -18,11 +18,6 @@ import axios from 'axios';
 // 22 = Chart Data uploaded from Laravel
 // 23 = All activities downloaded from Strava
 
-interface WatchData {
-    code: number;
-    data: any;
-    error?: boolean;
-}
 // (do not) show debug messages in the console
 export let debug = true;
 let butStillLogErrors = true;
