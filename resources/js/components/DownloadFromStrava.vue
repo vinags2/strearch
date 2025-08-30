@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { API_data, error_message } from '@/functions/Flags.js';
+import { error_message, whatWeAreDownloading } from '@/functions/Flags.js';
 import { getStravaData } from '@/functions/StravaAPI.js';
 import { Download } from 'lucide-vue-next';
 import Button from 'primevue/button';
-import { computed, defineEmits, onMounted, ref, watch } from 'vue';
+import { defineEmits, onMounted, ref } from 'vue';
 
 import Dialog from 'primevue/dialog';
 
 const props = defineProps({
-    downloadWhat: {
-        type: String,
-        default: 'activities',
+    flag: {
+        type: Number,
+        default: 10, // See flags.ts for values
     },
     withDialog: {
         type: Boolean,
@@ -22,49 +22,32 @@ const emit = defineEmits<{
     newdownload: any;
 }>();
 
-const whatToDownload = computed(() => {
-    if (props.downloadWhat == 'activities') {
-        return 'Activities';
-    } else if (props.downloadWhat == 'athlete') {
-        return 'Athlete';
-    } else {
-        return 'All Activities';
-    }
-});
-
 const showClose = ref(false);
 const showAlert = ref(false);
 const showError = ref(false);
 const textForAlertDescription = ref('Please wait while the informaton from Strava is being downloaded');
-const textForAlertHeader = ref('Downloading ' + whatToDownload.value + ' information');
-const tip = ref('Update ' + whatToDownload.value + ' data');
-// let errorShown: boolean = false;
-
-watch(API_data, (newValue) => {
-    if ([1, 3, 5, 10].includes(newValue.code)) {
-        API_data.value = { code: 0, data: ['Resetting API_data values.'], error: false };
-        showSuccessBeforeClosing(newValue.code, newValue.error == false);
-    }
-});
+const textForAlertHeader = ref('Downloading ' + whatWeAreDownloading(props.flag) + ' information');
+const tip = ref('Update ' + whatWeAreDownloading(props.flag) + ' data');
 
 function showDialog() {
     textForAlertDescription.value = 'Please wait while the informaton from Strava is being downloaded';
-    textForAlertHeader.value = 'Downloading ' + whatToDownload.value + ' information';
+    textForAlertHeader.value = 'Downloading ' + whatWeAreDownloading(props.flag) + ' information';
     showClose.value = false;
-    // errorShown = false;
     showAlert.value = props.withDialog;
-    getStravaData(props.downloadWhat);
+    getData();
+}
+
+async function getData() {
+    const flag = await getStravaData(props.flag);
+    if (!flag) {
+        showSuccessBeforeClosing(0, false);
+        return;
+    }
+
+    showSuccessBeforeClosing(flag, true);
 }
 
 function showSuccessBeforeClosing(flag: number, success: boolean = true) {
-    // if (errorShown) {
-    //     return;
-    // } else {
-    //     errorShown = true;
-    // }
-    // if (!useStrearchData().showAnotherErrorMessage) {
-    //     return;
-    // }
     if (success) {
         textForAlertHeader.value = 'Information downloaded successfully';
         textForAlertDescription.value = 'The informaton from Strava has being downloaded successfully';
@@ -74,13 +57,9 @@ function showSuccessBeforeClosing(flag: number, success: boolean = true) {
         textForAlertDescription.value = error_message(flag, true);
         showAlert.value = true;
         showError.value = true;
-        // errorShown = true;
         emit('newdownload', 0);
     }
     showClose.value = true;
-    // setTimeout(function () {
-    //     showAlert.value = false;
-    // }, 3000);
 }
 
 onMounted(() => {

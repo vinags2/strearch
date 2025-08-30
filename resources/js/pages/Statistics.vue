@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import AppFooter from '@/components/AppFooter.vue';
 import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
-import { API_data } from '@/functions/Flags.js';
 import { getStats } from '@/functions/StrearchAPI.js';
 import Layout from '@/layouts/my/Layout.vue';
 import { Head } from '@inertiajs/vue3';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const props = defineProps({
     laravelVersion: {
@@ -27,12 +26,6 @@ const props = defineProps({
     },
 });
 
-watch(API_data, (newValue) => {
-    if (newValue.code == 8) {
-        fill_tableData(newValue.data.data);
-    }
-});
-
 const tableData = ref<any>([]);
 const loading = ref(true);
 
@@ -40,17 +33,22 @@ onMounted(() => {
     get_stats();
 });
 
-function get_stats() {
+async function get_stats() {
     loading.value = true;
-    getStats();
+    const stats = await getStats();
+    if (stats.error) {
+        loading.value = false;
+        return;
+    }
+    fill_tableData(stats.data);
 }
 
 function fill_tableData(data: any) {
     tableData.value = [];
     tableData.value.push({ col1: 'Current athlete', col2: 'bold', col3: data.athlete.first_name + ' ' + data.athlete.last_name });
     tableData.value.push({ col1: '', col2: '', col3: '' });
-    tableData.value.push({ col1: 'Date of last athlete download', col2: 'athlete', col3: data.date_of_last_athlete_strava_update });
-    tableData.value.push({ col1: 'Date of last activities download', col2: 'activities', col3: data.date_of_last_activities_strava_update });
+    tableData.value.push({ col1: 'Date of last athlete download', col2: '1', col3: data.date_of_last_athlete_strava_update });
+    tableData.value.push({ col1: 'Date of last activities download', col2: '10', col3: data.date_of_last_activities_strava_update });
     tableData.value.push({ col1: 'Number of activities', col2: 'bold, columns', col3: 'All', col4: 'Virtual', col5: 'IRL' });
     tableData.value.push({
         col1: 'Total',
@@ -226,8 +224,8 @@ function fill_tableData(data: any) {
 
                 <Column field="col2" header="Download">
                     <template #body="{ data }">
-                        <div v-if="data.col2 && (data.col2 == 'athlete' || data.col2 == 'activities')" class="flex items-center gap-2">
-                            <DownloadFromStrava @newdownload="get_stats" :download-what="data.col2"></DownloadFromStrava>
+                        <div v-if="data.col2 && (data.col2 == 1 || data.col2 == 10)" class="flex items-center gap-2">
+                            <DownloadFromStrava @newdownload="get_stats" :flag="Number(data.col2)"></DownloadFromStrava>
                         </div>
                     </template>
                 </Column>

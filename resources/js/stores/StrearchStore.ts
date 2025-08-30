@@ -2,6 +2,19 @@ import { async_axios } from '@/functions/Flags.js';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { defineStore } from 'pinia';
 
+// interface Filter {
+//     [key: string]: {
+//         value: string | string[] | null;
+//         matchMode: string;
+//     };
+// }
+
+// Initialize filters with proper type
+// const justTheFilter = ref<DataTableFilterMeta>({
+//     sport_type: { value: null, matchMode: 'equals' },
+//     // Add other filter fields as needed
+// });
+
 type Filter = {
     average_cadence: object;
     average_heartrate: object;
@@ -83,6 +96,7 @@ export const useStrearchData = defineStore('strearchData', {
 
         async initActivities(force = false) {
             if (this.activities.length == 0 || force) {
+                console.log('useStrearchData: initActivities called');
                 const ret = await async_axios({ url: route('activities.get'), flag: 12 });
                 this.activities = ret.data.activities;
                 this.sportTypes = ret.data.sportTypes;

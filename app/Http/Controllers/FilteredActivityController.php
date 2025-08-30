@@ -48,9 +48,10 @@ class FilteredActivityController extends Controller
     {
         // $r = FilteredActivity::updateOrCreate(
         //     ['id' => $activity['id']],
-        $r = FilteredActivity::create(
+        $r = FilteredActivity::updateOrCreate(
             [
-                'id' => $activity['id'],
+                'id' => $activity['id'], ],
+            [
                 'name' => $activity['name'],
                 'distance' => $activity['distance'] ?? null,
                 'total_elevation_gain' => $activity['total_elevation_gain'] ?? null,

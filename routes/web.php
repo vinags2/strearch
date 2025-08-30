@@ -20,10 +20,6 @@ Route::inertia('/', 'Welcome')->name('home');
 
 Route::inertia('notRegistered', 'NotRegistered')->name('notRegistered');
 
-// Strava OAuth routes
-Route::get('auth/strava', [StravaController::class, 'redirect'])->name('strava.auth');
-Route::get('auth/strava/callback', [StravaController::class, 'callback']);
-
 Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function () {
     Route::get('/dashboard', [ActivityController::class, 'index'])->name('dashboard');
 
@@ -36,7 +32,7 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
 
     // API routes to save data
     Route::post('/strava/access_token/save/{access_token}/{refresh_token}', [StravaController::class, 'store'])->name('token.save');
-    Route::post('/strava/errrorNotification', [StravaController::class, 'sendErrorNotification'])->name('error.notification');
+    Route::post('/strava/errorNotification', [StravaController::class, 'sendErrorNotification'])->name('error.notification');
     Route::post('/athlete/save/{id}', [AthleteController::class, 'store'])->name('athlete.save');
     Route::post('/activity/save/{activity}', [ActivityController::class, 'store_activity'])->name('activity.save');
     Route::post('/activities/save', [ActivityController::class, 'store'])->name('activities.save');

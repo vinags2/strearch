@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
-import { API_data } from '@/functions/Flags.js';
 import { getAthlete } from '@/functions/StrearchAPI.js';
 import Layout from '@/layouts/my/Layout.vue';
 import { Head } from '@inertiajs/vue3';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import { onMounted, ref, watch } from 'vue';
-
-watch(API_data, (newValue) => {
-    if (newValue.code == 11) {
-        fill_fields(newValue.data.data);
-    }
-});
+import { onMounted, ref } from 'vue';
 
 const tableData = ref<any>([]);
 const loading = ref(true);
@@ -21,9 +14,14 @@ onMounted(() => {
     get_athlete();
 });
 
-function get_athlete() {
+async function get_athlete() {
     loading.value = true;
-    getAthlete();
+    const athlete = await getAthlete();
+    if (athlete.error) {
+        loading.value = false;
+        return;
+    }
+    fill_fields(athlete.data);
 }
 
 function fill_fields(data: any) {
@@ -37,7 +35,7 @@ function fill_fields(data: any) {
     tableData.value.push({ col1: 'Weight', col2: '', col3: data.athlete.weight + ' kg' });
     tableData.value.push({ col1: 'Profile picture', col2: 'image', col3: data.athlete.profile_picture_large });
     tableData.value.push({ col1: 'Location', col2: '', col3: data.athlete.city + ' ' + data.athlete.state + ' ' + data.athlete.country });
-    tableData.value.push({ col1: 'Date of last download', col2: 'athlete', col3: data.date_of_last_athlete_strava_update });
+    tableData.value.push({ col1: 'Date of last download', col2: 1, col3: data.date_of_last_athlete_strava_update });
     loading.value = false;
 }
 </script>
@@ -46,11 +44,9 @@ function fill_fields(data: any) {
     <Head title="Athlete Details" />
 
     <Layout>
-        <!-- <div class="flex-col  bg-gradient-to-r from-cyan-200 to-blue-300 flex h-full flex-1 flex-col gap-4 rounded-xl p-4  bg-gradient-to-r from-cyan-200 to-blue-300"> -->
-        <!-- <div class="px-8 py-4 relative min-h-[100vh] flex-1 rounded-xl md:min-h-min"> -->
         <div v-if="tableData[1]?.col3 == null" class="mt-8 text-center text-gray-500">
             <p>No athlete data found. Please download your athlete data from Strava.</p>
-            <DownloadFromStrava @newdownload="get_athlete" download-what="athlete"></DownloadFromStrava>
+            <DownloadFromStrava @newdownload="get_athlete" :flag="1"></DownloadFromStrava>
         </div>
         <div v-else class="px-8">
             <p class="w-full py-8 text-xl font-semibold tracking-tight md:px-32">Athlete Details</p>
@@ -69,7 +65,7 @@ function fill_fields(data: any) {
                 <Column field="col2" header="Download">
                     <template #body="{ data }">
                         <div v-if="data.col2 && data.col2 != 'image'" class="flex items-center gap-2">
-                            <DownloadFromStrava @newdownload="get_athlete" :download-what="data.col2"></DownloadFromStrava>
+                            <DownloadFromStrava @newdownload="get_athlete" :flag="data.col2"></DownloadFromStrava>
                         </div>
                     </template>
                 </Column>

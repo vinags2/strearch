@@ -101,7 +101,9 @@ class AthleteController extends Controller
             'athlete' => $athlete ?? false,
             'date_of_last_athlete_strava_update' => $athlete->updated_at ?? 'no athlete data',
         ],
-            201
+            //     400
+            // );
+            200
         );
     }
 }

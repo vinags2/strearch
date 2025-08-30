@@ -6,81 +6,11 @@ use App\Models\Setting;
 use App\Models\Strava;
 use App\Traits\Utilities;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
 class StravaController extends Controller
 {
     use Utilities;
-
-    protected $clientId;
-
-    protected $clientSecret;
-
-    protected $redirectUri;
-
-    public function __construct()
-    {
-        $this->clientId = env('STRAVA_CLIENT_ID');
-        $this->clientSecret = env('STRAVA_CLIENT_SECRET');
-        $this->redirectUri = env('APP_URL').'/auth/strava/callback';
-    }
-
-    /**
-     * Redirect to Strava's OAuth page
-     */
-    public function redirect()
-    {
-        $scope = 'read,profile:read_all,activity:read_all';
-
-        $url = 'https://www.strava.com/oauth/authorize?'.http_build_query([
-            'client_id' => $this->clientId,
-            'redirect_uri' => $this->redirectUri,
-            'response_type' => 'code',
-            'scope' => $scope,
-            'approval_prompt' => 'force',
-        ]);
-
-        return redirect($url);
-    }
-
-    /**
-     * Handle the callback from Strava
-     */
-    public function callback(Request $request)
-    {
-        if ($request->has('error')) {
-            return redirect()->route('notRegistered')
-                ->with('message', 'Authorization failed: '.$request->get('error'));
-        }
-
-        $response = Http::post('https://www.strava.com/oauth/token', [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'code' => $request->code,
-            'grant_type' => 'authorization_code',
-        ]);
-
-        if (! $response->successful()) {
-            return redirect()->route('notRegistered')
-                ->with('message', 'Failed to get access token from Strava.');
-        }
-
-        $tokenData = $response->json();
-
-        // Save the tokens
-        Strava::updateOrCreate(
-            ['user_id' => Auth::id()],
-            [
-                'authentication_token' => $tokenData['access_token'],
-                'refresh_token' => $tokenData['refresh_token'],
-                'expiry_date' => now()->addSeconds($tokenData['expires_in']),
-            ]
-        );
-
-        return redirect()->route('dashboard');
-    }
 
     /**
      * Display a listing of the resource.
@@ -109,7 +39,7 @@ class StravaController extends Controller
         }
 
         Strava::updateOrCreate(
-            ['user_id' => Auth::id()],
+            ['user_id' => auth()->user()->id],
             [
                 'authentication_token' => $access_token,
                 'refresh_token' => $refresh_token,
@@ -194,7 +124,7 @@ class StravaController extends Controller
             ->send(new \App\Mail\ErrorNotification(
                 $request->input('flag'),
                 $request->input('error_code'),
-                implode(', ', $request->input('error_response')),
+                is_array($request->input('error_response')) ? implode(', ', $request->input('error_response')) : $request->input('error_response'),
                 $request->input('error_message')
             ));
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 import Button from 'primevue/button';
 import Column from 'primevue/column';
@@ -14,7 +14,6 @@ import { Bike, Delete } from 'lucide-vue-next';
 
 import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
 
-import { API_data } from '@/functions/Flags';
 import { getStravaData } from '@/functions/StravaAPI';
 
 import { useStrearchData } from '@/stores/StrearchStore';
@@ -31,12 +30,12 @@ const props = defineProps({
     },
 });
 
-watch(API_data, (newValue) => {
-    if ([6].includes(newValue.code)) {
-        API_data.value = { code: 0, data: ['Resetting API_data values.'], error: false };
-        showSuccessBeforeClosing(newValue.code, newValue.error == false);
-    }
-});
+// Initialize PrimeVue dialog state
+const dialogVisible = ref(false);
+const closeDialog = () => {
+    dialogVisible.value = false;
+};
+
 const form = useForm({ activityId: 0 });
 
 const deleteActivity = (e: Event) => {
@@ -59,14 +58,13 @@ const deletionSucceeded = ref(false);
 const deletionFailed = ref(false);
 const reDownloadOccurred = ref(false);
 
-function downloadAnActivity() {
-    deletionFailed.value = false;
-    deletionSucceeded.value = false;
-    reDownloadOccurred.value = false;
-    getStravaData('activity', currentId.value);
+async function downloadAnActivity() {
+    const flag = await getStravaData(6, currentId.value);
+    showSuccessBeforeClosing(flag != 0);
+    closeDialog();
 }
 
-function showSuccessBeforeClosing(flag: number, success: boolean = true) {
+function showSuccessBeforeClosing(success: boolean = true) {
     if (success) {
         deletionSucceeded.value = true;
         reDownloadOccurred.value = true;
@@ -80,7 +78,8 @@ function showSuccessBeforeClosing(flag: number, success: boolean = true) {
 const autoUpdateComplete = ref(!props.autoUpdateActivities);
 
 const strearchData = useStrearchData();
-const { activities, sportTypes, loading: loading, lastUpdate, justTheFilter } = storeToRefs(strearchData);
+const { activities, sportTypes, loading: loading, lastUpdate, justTheFilter } = storeToRefs(useStrearchData());
+
 strearchData.initActivities();
 
 function get_activities() {
@@ -202,7 +201,7 @@ function showAlert(title: string, id: number) {
             :filterMenuStyle="{ width: '14rem' }"
         >
             <template #filter="{ filterModel }">
-                <MultiSelect v-model="filterModel.value" :options="sportTypes" optionLabel="" placeholder="Any">
+                <MultiSelect v-model="filterModel.value" :options="[...sportTypes]" optionLabel="label" placeholder="Any">
                     <template #option="slotProps">
                         <div class="flex items-center gap-2">
                             <span>{{ slotProps.option }}</span>
@@ -316,16 +315,12 @@ function showAlert(title: string, id: number) {
                 <div class="">
                     <span v-if="autoUpdateComplete" class="">Update Actitivies from Strava</span>
                     <span v-else class="animate-pulse">Auto-updating actitivies from Strava</span>
-                    <DownloadFromStrava
-                        @newdownload="get_activities"
-                        :with-dialog="autoUpdateComplete"
-                        download-what="activities"
-                    ></DownloadFromStrava>
+                    <DownloadFromStrava @newdownload="get_activities" :with-dialog="autoUpdateComplete" :flag="10"></DownloadFromStrava>
                 </div>
-                <div>Activities current to {{ lastUpdate }}</div>
+                <div class="mt-1">Activities current to {{ lastUpdate }}</div>
                 <div v-if="autoUpdateComplete" class="">
                     <span class="">Re-download all activities from Strava</span>
-                    <DownloadFromStrava @newdownload="get_activities" download-what="all activities"></DownloadFromStrava>
+                    <DownloadFromStrava @newdownload="get_activities" :flag="23"></DownloadFromStrava>
                 </div>
                 <div v-else></div>
             </div>

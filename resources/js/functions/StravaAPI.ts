@@ -1,4 +1,4 @@
-import { API_data, async_axios, sendErrorNotifiction } from '@/functions/Flags.js';
+import { async_axios, sendErrorNotification } from '@/functions/Flags.js';
 import { saveAccessToken, save_activities, save_activity, save_athlete } from '@/functions/StrearchAPI.js';
 
 let athlete_url: string;
@@ -39,12 +39,12 @@ async function getActivitiesData(all: boolean = false) {
             moreData = false;
         } else {
             moreData = ret?.data.length > 0;
-            if (moreData) await save_activities(ret.data);
+            await save_activities(ret.data);
         }
         // pageNo < 30 is there to prevent infinite loops in case Strava API does not return an end of data.
         // The implication is that if there are more than 6000 activities, the code will not work correctly.
     } while (moreData && pageNo < 30);
-    return !ret.error;
+    return pageNo < 30;
 }
 
 async function getAthleteData() {
@@ -58,7 +58,7 @@ async function getAthleteData() {
 
 async function getAnActivity(id: number) {
     let full_url = createUrl({ url: activity_url, id: id });
-    const ret = await async_axios({ url: full_url, flag: 6, feedback: true });
+    const ret = await async_axios({ url: full_url, flag: 6 });
     if (!ret.error) {
         await save_activity(ret.data);
     }
@@ -88,35 +88,30 @@ async function authoriseWithStrava() {
     return true;
 }
 
-// downloadWhat can equal 'athlete', 'activities', 'all activities', 'activity'
-export async function getStravaData(downloadWhat: string, id: number = 0) {
-    let error_string: string = 'athlete';
+export async function getStravaData(flag: number, id: number = 0): Promise<number> {
+    // let error_string: string = 'athlete';
     if (!(await authoriseWithStrava())) {
-        API_data.value = { code: 3, data: ['There was an error authorising with Strava.'], error: true };
-        return;
+        return 0;
     }
     let API_number_of_calls = 0;
     while (++API_number_of_calls < 3) {
-        if (downloadWhat == 'athlete') {
+        if (flag == 1) {
             if (await getAthleteData()) {
-                API_data.value = { code: 1, data: ['Athlete data downloaded from Strava successfully'], error: false };
-                return;
+                return flag;
             }
-        } else if (downloadWhat == 'activity') {
+        } else if (flag == 6) {
             if (await getAnActivity(id)) {
-                API_data.value = { code: 1, data: ['Activity data downloaded from Strava successfully'], error: false };
-                return;
+                return flag;
             }
         } else {
-            error_string = 'activities';
-            if (await getActivitiesData(downloadWhat == 'All Activities')) {
-                API_data.value = { code: 10, data: ['Activities data downloaded from Strava successfully'], error: false };
-                return;
+            // error_string = 'activities';
+            if (await getActivitiesData(flag == 23)) {
+                return flag;
             }
         }
     }
-    API_data.value = { code: 5, data: ['There was an error downloading the ' + error_string + ' data.'], error: true };
-    sendErrorNotifiction(5, '0', ['Too many attempts trying to authorise with Strava']);
+    sendErrorNotification(5, '0', ['Too many attempts trying to authorise with Strava']);
+    return 0;
 }
 
 function createUrl({ url = '', parameters = '', id = 0 }) {
