@@ -201,7 +201,7 @@ function showAlert(title: string, id: number) {
             :filterMenuStyle="{ width: '14rem' }"
         >
             <template #filter="{ filterModel }">
-                <MultiSelect v-model="filterModel.value" :options="[...sportTypes]" optionLabel="label" placeholder="Any">
+                <MultiSelect v-model="filterModel.value" :options="[...sportTypes]" optionLabel="" placeholder="Any">
                     <template #option="slotProps">
                         <div class="flex items-center gap-2">
                             <span>{{ slotProps.option }}</span>

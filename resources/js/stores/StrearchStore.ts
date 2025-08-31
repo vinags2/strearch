@@ -96,7 +96,6 @@ export const useStrearchData = defineStore('strearchData', {
 
         async initActivities(force = false) {
             if (this.activities.length == 0 || force) {
-                console.log('useStrearchData: initActivities called');
                 const ret = await async_axios({ url: route('activities.get'), flag: 12 });
                 this.activities = ret.data.activities;
                 this.sportTypes = ret.data.sportTypes;
