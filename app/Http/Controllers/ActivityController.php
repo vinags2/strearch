@@ -144,6 +144,7 @@ class ActivityController extends Controller
                 'has_kudoed' => $activity['has_kudoed'] ?? null,
                 'suffer_score' => $activity['suffer_score'] ?? null,
                 'moving_time' => $activity['moving_time'] ?? null,
+                'device_name' => $activity['device_name'] ?? null,
             ]
         );
     }
@@ -187,6 +188,15 @@ class ActivityController extends Controller
 
     }
 
+    private function get_years_exercising()
+    {
+        return Activity::selectRaw("DISTINCT strftime('%Y', start_date_local) as year")
+            ->where('user_id', $this->my('id'))
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+    }
+
     public function api_get()
     {
         $activities = $this->getActivities();
@@ -195,6 +205,8 @@ class ActivityController extends Controller
             'activities' => $activities ?? false,
             'date_of_last_activities_strava_update' => Setting::last_activities_update_from_strava(),
             'sportTypes' => $this->getSportTypes(),
+            'deviceNames' => $this->getDeviceNames(),
+            'yearsExercising' => $this->get_years_exercising(),
         ],
             201
         );

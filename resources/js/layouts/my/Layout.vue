@@ -29,6 +29,13 @@ const items = ref([
             router.visit(route('activities'));
         },
     },
+    {
+        label: 'Experimental',
+        command: () => {
+            showLoading.value = true;
+            router.visit(route('experimental'));
+        },
+    },
 ]);
 
 const showLoading = ref(false);

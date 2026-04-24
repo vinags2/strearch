@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
-use App\Models\Filter;
+// use App\Models\Filter;
 use App\Models\Setting;
 use App\Traits\Utilities;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,9 +24,20 @@ class ExperimentalController extends Controller
      */
     public function index(): Response
     {
-        $activities = $this->getActivities();
+
+        // $response = Http::get('https://www.strava.com/api/v3/activities/15654812865?access_token=d1268023dbf6c1e4c1d017551c317ac4d41181fe');
+        // $resJson = $response->json();
+        // dd($resJson['segment_efforts'], $resJson['segment_efforts'][1]['name'], $resJson);
+
+        // $metaData = (new StravaController)->stravaMetaData();
+        // dd($metaData->original, $metaData->original['client_id']);
+
+        // $activities = $this->getActivities();
+
+        (new GetDataFromStravaController)->getAnActivity(15654812865);
 
         return Inertia::render('Experimental', [
+            'aProp' => ['key' => 'value from controller'],
         ]);
 
     }
@@ -150,6 +162,7 @@ class ExperimentalController extends Controller
                 'has_kudoed' => $activity['has_kudoed'] ?? null,
                 'suffer_score' => $activity['suffer_score'] ?? null,
                 'moving_time' => $activity['moving_time'] ?? null,
+                'device_name' => $activity['device_name'] ?? null,
             ]
         );
     }

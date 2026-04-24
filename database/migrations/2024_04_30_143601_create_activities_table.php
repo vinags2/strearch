@@ -193,6 +193,8 @@ return new class extends Migration
                 ->nullable()
                 ->comment('suffer score')
                 ->default(0);
+            $table->string('device_name')
+                ->nullable();
             $table->timestamps();
         });
     }

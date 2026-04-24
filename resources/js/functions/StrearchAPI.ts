@@ -26,6 +26,10 @@ export async function save_activity(activity: any) {
 }
 
 export async function save_activities(activities: any, filtered_activities: boolean = false) {
-    let save_route = filtered_activities ? route('activities.filtered.save') : route('activities.save');
+    const save_route = filtered_activities ? route('activities.filtered.save') : route('activities.save');
     return await async_axios({ url: save_route, flag: 9, method: 'post', post_data: activities });
+}
+
+export async function update_segment_efforts() {
+    return await async_axios({ url: route('segment_efforts.update'), flag: 15 });
 }

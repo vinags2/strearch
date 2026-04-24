@@ -20,6 +20,7 @@ type Filter = {
     average_heartrate: object;
     average_speed: object;
     average_watts: object;
+    weighted_average_watts: object;
     distance: object;
     kilojoules: object;
     max_heartrate: object;
@@ -33,6 +34,7 @@ type Filter = {
     start_date_local_as_timestamp: object;
     suffer_score: object;
     total_elevation_gain: object;
+    device_name: object;
 };
 
 type FiltersElement = {
@@ -48,11 +50,11 @@ type Activity = {
     average_heartrate: number;
     average_speed: number;
     average_watts: number;
+    weighted_average_watts: number;
     distance: number;
     kilojoules: number;
     max_heartrate: number;
     max_speed: number;
-    max_watts: number;
     moving_time: number;
     moving_time_as_string: string;
     name: string;
@@ -61,12 +63,14 @@ type Activity = {
     start_date_local_as_timestamp: number;
     suffer_score: number;
     total_elevation_gain: number;
+    device_name: object;
 };
 
 export const useStrearchData = defineStore('strearchData', {
     state: () => ({
         activities: <Activity[]>[],
         sportTypes: <string>{},
+        deviceNames: <string>{},
         lastUpdate: <string>'',
         filteredActivities: <Activity[]>[],
         filter: <Filter>{},
@@ -78,6 +82,10 @@ export const useStrearchData = defineStore('strearchData', {
         maxFilterId: -1,
         filteredActivitiesFlag: false,
         timeToShowError: true,
+        yearsExercising: <number[]>[],
+        time_periods: <{ id: string; name: string }[]>[],
+        timePeriod: null,
+        customDateFilter: null,
     }),
 
     actions: {
@@ -94,13 +102,30 @@ export const useStrearchData = defineStore('strearchData', {
             }
         },
 
+        initTimePeriods() {
+            this.time_periods = [{ id: 'all', name: 'All time' }];
+            this.yearsExercising.forEach((year) => {
+                this.time_periods.push({ id: String(year), name: String(year) });
+            });
+            this.time_periods.push(
+                { id: 'last_months_1', name: 'Last 1 month' },
+                { id: 'last_months_3', name: 'Last 3 months' },
+                { id: 'last_months_6', name: 'Last 6 months' },
+                { id: 'last_months_12', name: 'Last 12 months' },
+                { id: 'custom', name: 'custom' },
+            );
+        },
+
         async initActivities(force = false) {
             if (this.activities.length == 0 || force) {
                 const ret = await async_axios({ url: route('activities.get'), flag: 12 });
                 this.activities = ret.data.activities;
                 this.sportTypes = ret.data.sportTypes;
+                this.deviceNames = ret.data.deviceNames;
+                this.yearsExercising = ret.data.yearsExercising;
                 this.stringToDate();
                 this.lastUpdate = ret.data.date_of_last_activities_strava_update;
+                this.initTimePeriods();
             }
         },
 
@@ -120,10 +145,10 @@ export const useStrearchData = defineStore('strearchData', {
 
         // Convert JS Objects to JSON as strings for saving to DB
         convertJStypestoAPIFilter() {
-            let convertedFilters = <any>[];
+            const convertedFilters = <any>[];
 
             this.filters.forEach((element: any) => {
-                let combined = {
+                const combined = {
                     filterName: element.name,
                     filters: JSON.stringify(element.filter),
                     active: element.active,
@@ -174,7 +199,7 @@ export const useStrearchData = defineStore('strearchData', {
 
         // Set the Active Filter and it's dependencies, searching for the filter where active = 1
         setActiveFilter(withSave = true) {
-            var i = 0;
+            let i = 0;
             this.activeFilterIndex = -1;
             this.activeFilter = this.newFiltersElement;
             this.filters.forEach((el: FiltersElement) => {
@@ -186,10 +211,75 @@ export const useStrearchData = defineStore('strearchData', {
             });
             this.justTheFilter = this.activeFilter.filter;
             if (withSave) this.saveFiltersActually();
+            this.setTimePeriodForActiveFilter();
+        },
+
+        setTimePeriodForActiveFilter() {
+            if (this.timePeriod == null) return;
+            if (this.timePeriod.id == 'custom') {
+                if (this.customDateFilter != null) {
+                    this.justTheFilter.start_date_local.constraints = this.customDateFilter;
+                }
+                return;
+            }
+
+            if (this.timePeriod.id == 'all') {
+                this.justTheFilter.start_date_local = {
+                    operator: FilterOperator.AND,
+                    constraints: [
+                        {
+                            value: null,
+                            matchMode: FilterMatchMode.DATE_IS,
+                        },
+                    ],
+                };
+            } else if (this.timePeriod.id.substring(0, 11) == 'last_months') {
+                const now = new Date();
+                const past = new Date();
+                const numberOfMonths = Number(this.timePeriod.id.substring(12));
+                past.setMonth(past.getMonth() - numberOfMonths);
+                this.justTheFilter.start_date_local = {
+                    operator: FilterOperator.AND,
+                    constraints: this.constraintsForTimePeriodBetweenDates(past, now),
+                };
+            } else if (!isNaN(+this.timePeriod.id)) {
+                const nextYear = Number(this.timePeriod.id) + 1;
+                const prevYear = Number(this.timePeriod.id) - 1;
+                this.justTheFilter.start_date_local = {
+                    operator: FilterOperator.AND,
+                    constraints: this.constraintsForTimePeriodBetweenDates(
+                        new Date(String(prevYear) + '-12-31T23:59:59'),
+                        new Date(String(nextYear) + '-01-01T00:00:00'),
+                    ),
+                };
+            }
+        },
+
+        constraintsForTimePeriodBetweenDates(startDate: Date, endDate: Date) {
+            return [
+                {
+                    value: endDate,
+                    matchMode: FilterMatchMode.DATE_BEFORE,
+                },
+                {
+                    value: startDate,
+                    matchMode: FilterMatchMode.DATE_AFTER,
+                },
+            ];
+        },
+
+        saveCustomDateFilter() {
+            if (this.timePeriod == null) return;
+            if (this.timePeriod.id != 'custom') {
+                this.customDateFilter = null;
+                return;
+            }
+            this.customDateFilter = this.justTheFilter.start_date_local.constraints;
         },
 
         // Change the Active Filter to what has been set in the variable ActiveFilter
         changeActiveFilter() {
+            this.saveCustomDateFilter();
             this.filters.forEach((el: any) => {
                 if (el.id == this.activeFilter?.id) {
                     el.active = 1;
@@ -268,7 +358,7 @@ export const useStrearchData = defineStore('strearchData', {
 
         // Prepare to delete the current filter from the DB
         deleteFilterFromFiltersArray() {
-            let index = this.activeFilterIndex;
+            const index = this.activeFilterIndex;
             this.filters.splice(index, 1);
             this.changeActiveFilter();
         },
@@ -304,6 +394,7 @@ export const useStrearchData = defineStore('strearchData', {
                 average_speed: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 average_cadence: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 average_watts: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+                weighted_average_watts: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 average_heartrate: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 max_heartrate: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 total_elevation_gain: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
@@ -313,6 +404,7 @@ export const useStrearchData = defineStore('strearchData', {
                 max_watts: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 moving_time: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 moving_time_as_string: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+                device_name: { value: null, matchMode: FilterMatchMode.IN },
             };
         },
 
@@ -321,7 +413,6 @@ export const useStrearchData = defineStore('strearchData', {
                 setTimeout(
                     () => {
                         this.timeToShowError = true;
-                        console.log('useStrearchData: timeToShowError set to true');
                         resolve('resolved');
                     },
                     10 * 60 * 1000, // 10 minutes
@@ -329,10 +420,8 @@ export const useStrearchData = defineStore('strearchData', {
             });
         },
         showAnotherErrorMessage(state): boolean {
-            // console.log('useStrearchData: showAnotherErrorMessage called, timeToShowError = ', state.timeToShowError);
             if (state.timeToShowError) {
                 state.timeToShowError = false;
-                // console.log('resolved = ', this.waitBeforeShowingAnotherErrorMessage);
                 return true;
             }
             return false;

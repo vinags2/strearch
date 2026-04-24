@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\MyScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -57,5 +58,8 @@ class Filter extends Model
     protected static function booted(): void
     {
         static::addGlobalScope(new MyScope);
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('name');
+        });
     }
 }

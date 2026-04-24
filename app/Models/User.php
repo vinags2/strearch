@@ -68,4 +68,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Setting::class);
     }
+
+    public function segment_efforts(): HasMany
+    {
+        return $this->hasMany(SegmentEffort::class);
+    }
 }

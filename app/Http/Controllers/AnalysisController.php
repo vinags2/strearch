@@ -13,16 +13,17 @@ class AnalysisController extends Controller
     private $analyses = [
         ['id' => 0, 'name' => 'Average Heartrate', 'active' => 0],
         ['id' => 1, 'name' => 'Average Watts', 'active' => 0],
-        ['id' => 2, 'name' => 'Average Climbing', 'active' => 0],
-        ['id' => 3, 'name' => 'Average Distance', 'active' => 0],
-        ['id' => 4, 'name' => 'Average Speed', 'active' => 0],
-        ['id' => 5, 'name' => 'Total Climbing', 'active' => 0],
-        ['id' => 6, 'name' => 'Total Distance', 'active' => 0],
-        ['id' => 7, 'name' => 'Average Heartrate compared to Climbing', 'active' => 0],
-        ['id' => 8, 'name' => 'Average Heartrate compared to Distance', 'active' => 0],
-        ['id' => 9, 'name' => 'Average Heartrate compared to Speed', 'active' => 0],
-        ['id' => 10, 'name' => 'Average Heartrate compared to Watts', 'active' => 0],
-        ['id' => 11, 'name' => 'Ratio of climbing to distance', 'active' => 0],
+        ['id' => 2, 'name' => 'Average Weighted Watts', 'active' => 0],
+        ['id' => 3, 'name' => 'Average Climbing', 'active' => 0],
+        ['id' => 4, 'name' => 'Average Distance', 'active' => 0],
+        ['id' => 5, 'name' => 'Average Speed', 'active' => 0],
+        ['id' => 6, 'name' => 'Total Climbing', 'active' => 0],
+        ['id' => 7, 'name' => 'Total Distance', 'active' => 0],
+        ['id' => 8, 'name' => 'Average Heartrate compared to Climbing', 'active' => 0],
+        ['id' => 9, 'name' => 'Average Heartrate compared to Distance', 'active' => 0],
+        ['id' => 10, 'name' => 'Average Heartrate compared to Speed', 'active' => 0],
+        ['id' => 11, 'name' => 'Average Heartrate compared to Watts', 'active' => 0],
+        ['id' => 12, 'name' => 'Ratio of climbing to distance', 'active' => 0],
     ];
 
     private $analysis_ids = [];
@@ -120,6 +121,7 @@ class AnalysisController extends Controller
                 round(avg(average_speed),0) as `Speed`,
                 round(AVG(average_heartrate)/avg(average_speed),1) as `HRtoSpeed`,
                 round(avg(average_watts),0) as `Watts`,
+                round(avg(weighted_average_watts),0) as `WeightedWatts`,
                 round(AVG(average_heartrate)/avg(total_elevation_gain),2) as `HRtoWatts`,
                 round(sum(total_elevation_gain)/sum(distance)/10,2) as `ClimbingToDistance`,';
 
@@ -207,19 +209,21 @@ class AnalysisController extends Controller
 
     private function getRowData($row, $analysisId)
     {
+        $row = $row->toArray();
         switch ($analysisId) {
-            case 1: return $row->Watts;
-            case 2: return $row->Climbing;
-            case 3: return $row->Distance;
-            case 4: return $row->Speed;
-            case 5: return $row->TotalClimbing;
-            case 6: return $row->TotalDistance;
-            case 7: return $row->HRtoClimbing;
-            case 8: return $row->HRtoDistance;
-            case 9: return $row->HRtoSpeed;
-            case 10: return $row->HRtoWatts;
-            case 11: return $row->ClimbingToDistance;
-            default: return $row->AverageHR;
+            case 1: return $row['Watts'];
+            case 2: return $row['WeightedWatts'];
+            case 3: return $row['Climbing'];
+            case 4: return $row['Distance'];
+            case 5: return $row['Speed'];
+            case 6: return $row['TotalClimbing'];
+            case 7: return $row['TotalDistance'];
+            case 8: return $row['HRtoClimbing'];
+            case 9: return $row['HRtoDistance'];
+            case 10: return $row['HRtoSpeed'];
+            case 11: return $row['HRtoWatts'];
+            case 12: return $row['ClimbingToDistance'];
+            default: return $row['AverageHR'];
         }
     }
 
@@ -227,16 +231,17 @@ class AnalysisController extends Controller
     {
         switch ($analysisId) {
             case 1: return 'Average Watts';
-            case 2: return 'Average Climbing';
-            case 3: return 'Average Distance';
-            case 4: return 'Average Speed';
-            case 5: return 'Total Climbing';
-            case 6: return 'Total Distance';
-            case 7: return 'Ratio of HR to Climbing';
-            case 8: return 'Ratio of HR to Distance';
-            case 9: return 'Ratio of HR to Speed';
-            case 10: return 'Ratio of HR to Watts';
-            case 11: return 'Ratio of Climbing to Distance';
+            case 2: return 'Average Weighted Watts';
+            case 3: return 'Average Climbing';
+            case 4: return 'Average Distance';
+            case 5: return 'Average Speed';
+            case 6: return 'Total Climbing';
+            case 7: return 'Total Distance';
+            case 8: return 'Ratio of HR to Climbing';
+            case 9: return 'Ratio of HR to Distance';
+            case 10: return 'Ratio of HR to Speed';
+            case 11: return 'Ratio of HR to Watts';
+            case 12: return 'Ratio of Climbing to Distance';
             default: return 'Average Heartrate';
         }
     }

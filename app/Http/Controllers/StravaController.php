@@ -108,9 +108,9 @@ class StravaController extends Controller
             ['client_id' => $this->getClientId(),
                 'client_secret' => $this->getClientSecret(),
                 'refresh_token' => $this->getRefreshToken(),
-                'athlete_url' => 'https://www.strava.com/api/v3/athlete',
-                'activity_url' => 'https://www.strava.com/api/v3/activities',
-                'activities_url' => 'https://www.strava.com/api/v3/athlete/activities',
+                'athlete_url' => $this->getAthleteURL(),
+                'activity_url' => $this->getActivityURL(),
+                'activities_url' => $this->getActivitiesURL(),
                 'date_of_last_activity_update' => Setting::last_activities_update_from_strava_as_unix_timestamp()],
             201
             // ['The Strava API is not yet implemented in this version of Strearch.'],

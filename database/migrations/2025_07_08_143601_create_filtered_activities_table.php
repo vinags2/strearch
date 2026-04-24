@@ -41,6 +41,9 @@ return new class extends Migration
             $table->double('average_watts')
                 ->comment('average watts')
                 ->nullable();
+            $table->double('weighted_average_watts')
+                ->comment('weighted average watts')
+                ->nullable();
             $table->double('max_watts')
                 ->comment('maximum watts')
                 ->nullable();
@@ -59,6 +62,8 @@ return new class extends Migration
                 ->nullable()
                 ->comment('suffer score')
                 ->default(0);
+            $table->string('device_name')
+                ->nullable();
             $table->timestamps();
         });
     }

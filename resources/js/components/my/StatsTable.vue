@@ -21,16 +21,16 @@ watch(filteredActivities, () => {
 });
 
 function convertMovingTimeToString(mt: number) {
-    let d = Math.floor(mt / 86400);
+    const d = Math.floor(mt / 86400);
     mt = mt - d * 86400;
-    let h = Math.floor(mt / 3600);
-    let m = Math.floor((mt % 3600) / 60);
-    let s = Math.floor((mt % 3600) % 60);
+    const h = Math.floor(mt / 3600);
+    const m = Math.floor((mt % 3600) / 60);
+    const s = Math.floor((mt % 3600) % 60);
 
-    let dDisplay: string = d.toString();
-    let hDisplay: string = h.toString();
-    let mDisplay = m.toString();
-    let sDisplay = s.toString();
+    const dDisplay: string = d.toString();
+    const hDisplay: string = h.toString();
+    const mDisplay = m.toString();
+    const sDisplay = s.toString();
 
     let display = d > 0 ? dDisplay + 'd ' : '';
     display = h > 0 ? display + hDisplay + 'h ' : display;
@@ -40,7 +40,7 @@ function convertMovingTimeToString(mt: number) {
 }
 
 function calculate_stats(data: any) {
-    var stats = {
+    const stats = {
         distance: 0,
         ascent: 0,
         numberOfActivities: 0,
@@ -62,20 +62,24 @@ function calculate_stats(data: any) {
         average_speed: <any>0,
         average_pace: <any>0,
         average_watts: <any>0,
+        weighted_average_watts: <any>0,
         average_relative_effort: <any>0,
         times_cadence_recorded: 0,
         times_heartrate_recorded: 0,
         times_watts_recorded: 0,
+        weighted_times_watts_recorded: 0,
         minimum_cadence: <any>1000000,
         minimum_heartrate: <any>100000,
         minimum_speed: <any>100000,
         minimum_pace: <any>100000,
         minimum_watts: <any>100000,
+        weighted_minimum_watts: <any>100000,
         maximum_cadence: <any>0,
         maximum_heartrate: <any>0,
         maximum_speed: <any>0,
         maximum_pace: <any>0,
         maximum_watts: <any>0,
+        weighted_maximum_watts: <any>0,
         relative_effort: <any>0,
         maximum_relative_effort: <any>0,
         minimum_relative_effort: <any>1000000,
@@ -96,10 +100,12 @@ function calculate_stats(data: any) {
         stats.average_heartrate += element.average_heartrate;
         stats.average_speed += element.average_speed;
         stats.average_watts += element.average_watts;
+        stats.weighted_average_watts += element.weighted_average_watts;
         stats.average_relative_effort += element.suffer_score;
         stats.times_cadence_recorded += element.average_cadence == null ? 0 : 1;
         stats.times_heartrate_recorded += element.average_heartrate == null ? 0 : 1;
         stats.times_watts_recorded += element.average_watts == null ? 0 : 1;
+        stats.weighted_times_watts_recorded += element.weighted_average_watts == null ? 0 : 1;
         stats.times_relative_effort_recorded += element.suffer_score == null ? 0 : 1;
         if (element.average_cadence)
             stats.minimum_cadence = stats.minimum_cadence < element.average_cadence ? stats.minimum_cadence : element.average_cadence;
@@ -113,6 +119,12 @@ function calculate_stats(data: any) {
         if (element.average_speed) stats.minimum_speed = stats.minimum_speed < element.average_speed ? stats.minimum_speed : element.average_speed;
         if (element.average_watts) stats.minimum_watts = stats.minimum_watts < element.average_watts ? stats.minimum_watts : element.average_watts;
         if (element.average_watts) stats.maximum_watts = stats.maximum_watts > element.average_watts ? stats.maximum_watts : element.average_watts;
+        if (element.weighted_average_watts)
+            stats.weighted_minimum_watts =
+                stats.weighted_minimum_watts < element.weighted_average_watts ? stats.weighted_minimum_watts : element.weighted_average_watts;
+        if (element.weighted_average_watts)
+            stats.weighted_maximum_watts =
+                stats.weighted_maximum_watts > element.weighted_average_watts ? stats.weighted_maximum_watts : element.weighted_average_watts;
         if (element.suffer_score)
             stats.minimum_relative_effort =
                 stats.minimum_relative_effort < element.suffer_score ? stats.minimum_relative_effort : element.suffer_score;
@@ -131,6 +143,8 @@ function calculate_stats(data: any) {
     stats.average_pace = stats.average_speed == 0 ? null : ((stats.numberOfActivities / stats.average_speed) * 60).toFixed(2);
     stats.average_speed = Math.floor(stats.average_speed / stats.numberOfActivities);
     stats.average_watts = stats.times_watts_recorded > 0 ? Math.floor(stats.average_watts / stats.times_watts_recorded) : null;
+    stats.weighted_average_watts =
+        stats.weighted_times_watts_recorded > 0 ? Math.floor(stats.weighted_average_watts / stats.weighted_times_watts_recorded) : null;
     stats.average_relative_effort =
         stats.times_relative_effort_recorded > 0 ? Math.floor(stats.average_relative_effort / stats.times_relative_effort_recorded) : null;
     stats.minimum_pace = stats.minimum_speed == 0 ? null : (1 / stats.minimum_speed) * 60;
@@ -199,6 +213,18 @@ function fill_statsTableData(data: any) {
         col1: 'maximum',
         col2: '',
         col3: Math.round(stats.maximum_watts) == 0 ? null : Math.round(stats.maximum_watts).toLocaleString(),
+    });
+    statsTableData.value.push({ col1: 'Weighted watts', col2: 'bold', col3: '' });
+    statsTableData.value.push({ col1: 'average', col2: '', col3: stats.weighted_average_watts });
+    statsTableData.value.push({
+        col1: 'minimum',
+        col2: '',
+        col3: Math.round(stats.weighted_minimum_watts) > 1000 ? null : Math.round(stats.weighted_minimum_watts).toLocaleString(),
+    });
+    statsTableData.value.push({
+        col1: 'maximum',
+        col2: '',
+        col3: Math.round(stats.weighted_maximum_watts) == 0 ? null : Math.round(stats.weighted_maximum_watts).toLocaleString(),
     });
     statsTableData.value.push({ col1: 'Speed', col2: 'bold', col3: '' });
     if (stats.average_speed == 0) {

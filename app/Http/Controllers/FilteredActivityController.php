@@ -61,12 +61,14 @@ class FilteredActivityController extends Controller
                 'max_speed' => $activity['max_speed'] ?? null,
                 'average_cadence' => $activity['average_cadence'] ?? null,
                 'average_watts' => $activity['average_watts'] ?? null,
+                'weighted_average_watts' => $activity['weighted_average_watts'] ?? null,
                 'max_watts' => $activity['max_watts'] ?? null,
                 'kilojoules' => $activity['kilojoules'] ?? null,
                 'average_heartrate' => $activity['average_heartrate'] ?? null,
                 'max_heartrate' => $activity['max_heartrate'] ?? null,
                 'suffer_score' => $activity['suffer_score'] ?? null,
                 'moving_time' => $activity['moving_time'] ?? null,
+                'device_name' => $activity['device_name'] ?? null,
                 'user_id' => auth()->user()->id,
             ]
         );

@@ -2,6 +2,7 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
@@ -10,7 +11,7 @@ import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
 
-import { Bike, Delete } from 'lucide-vue-next';
+import { Bike, Delete, Download } from 'lucide-vue-next';
 
 import DownloadFromStrava from '@/components/DownloadFromStrava.vue';
 
@@ -78,7 +79,7 @@ function showSuccessBeforeClosing(success: boolean = true) {
 const autoUpdateComplete = ref(!props.autoUpdateActivities);
 
 const strearchData = useStrearchData();
-const { activities, sportTypes, loading: loading, lastUpdate, justTheFilter } = storeToRefs(useStrearchData());
+const { activities, sportTypes, deviceNames, loading: loading, lastUpdate, justTheFilter } = storeToRefs(useStrearchData());
 
 strearchData.initActivities();
 
@@ -117,8 +118,48 @@ function showAlert(title: string, id: number) {
     alertIsVisible.value = true;
     return true;
 }
+const dt = ref();
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
+const tip = 'Export activities as a CSV file';
+function myExportFunction(data) {
+    if (data.data && data.data instanceof Date) {
+        return formatDate(data.data);
+    } else return data.data;
+}
+const t1 = ref(justTheFilter.value.start_date_local);
+function changeDateFilter() {
+    // if (!justTheFilter.value.start_date_local) {
+    justTheFilter.value.start_date_local = { constraints: [] };
+    // }
+    justTheFilter.value.start_date_local = {
+        operator: FilterOperator.AND,
+        constraints: [
+            {
+                value: new Date('2024-01-01T00:00:00'),
+                matchMode: FilterMatchMode.DATE_BEFORE,
+            },
+            {
+                // value: new Date('2024-01-01T00:00:00'),
+                value: new Date('2023-11-30T00:00:00'),
+                matchMode: FilterMatchMode.DATE_AFTER,
+            },
+            // {
+            //     value: new Date('2024-12-31T23:59:59'),
+            //     matchMode: 'lte',
+            // },
+        ],
+    };
+    t1.value = justTheFilter.value.start_date_local;
+}
 </script>
 <template>
+    <!-- <div class="mt-4">justTheFilter = {{ justTheFilter }}</div>
+    <div class="mt-4">start_date_local's year = {{ justTheFilter.start_date_local?.constraints[0].value?.getFullYear() }}</div>
+    <div class="mt-4">t1 = {{ t1 }}</div>
+    <button @click="changeDateFilter()" class="p-button p-component mb-4 mt-4">Modify Date Filter</button> -->
+
     <DataTable
         :value="activities"
         v-model:filters="justTheFilter"
@@ -131,6 +172,8 @@ function showAlert(title: string, id: number) {
         scrollable
         scrollHeight="550px"
         :virtualScrollerOptions="{ itemSize: 44 }"
+        ref="dt"
+        :exportFunction="myExportFunction"
     >
         <template #empty> No activities found. </template>
         <template #loading> Loading activity data. Please wait. </template>
@@ -272,6 +315,19 @@ function showAlert(title: string, id: number) {
         </Column>
 
         <Column
+            field="weighted_average_watts"
+            filterField="weighted_average_watts"
+            dataType="numeric"
+            header="Avg weighted watts"
+            sortable
+            style="text-align: right; min-width: 100px"
+        >
+            <template #filter="{ filterModel, filterCallback }">
+                <InputText v-model="filterModel.value" type="number" @input="filterCallback()" placeholder="Search by weighted watts" />
+            </template>
+        </Column>
+
+        <Column
             field="average_heartrate"
             filterField="average_heartrate"
             dataType="numeric"
@@ -310,6 +366,26 @@ function showAlert(title: string, id: number) {
             </template>
         </Column>
 
+        <Column
+            field="device_name"
+            header="Device"
+            style="min-width: 150px"
+            sortable
+            filterField="device_name"
+            :showFilterMatchModes="false"
+            :filterMenuStyle="{ width: '14rem' }"
+        >
+            <template #filter="{ filterModel }">
+                <MultiSelect v-model="filterModel.value" :options="[...deviceNames]" optionLabel="" placeholder="Any">
+                    <template #option="slotProps">
+                        <div class="flex items-center gap-2">
+                            <span>{{ slotProps.option }}</span>
+                        </div>
+                    </template>
+                </MultiSelect>
+            </template>
+        </Column>
+
         <template #footer>
             <div class="flex justify-between">
                 <div class="">
@@ -318,6 +394,20 @@ function showAlert(title: string, id: number) {
                     <DownloadFromStrava @newdownload="get_activities" :with-dialog="autoUpdateComplete" :flag="10"></DownloadFromStrava>
                 </div>
                 <div class="mt-1">Activities current to {{ lastUpdate }}</div>
+                <div>
+                    Export
+                    <Button
+                        label="Export"
+                        @click="exportCSV()"
+                        style="background-color: transparent; border: none"
+                        v-tooltip.top="{
+                            value: tip,
+                            pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' },
+                        }"
+                    >
+                        <Download color="blue" :size="16" />
+                    </Button>
+                </div>
                 <div v-if="autoUpdateComplete" class="">
                     <span class="">Re-download all activities from Strava</span>
                     <DownloadFromStrava @newdownload="get_activities" :flag="23"></DownloadFromStrava>

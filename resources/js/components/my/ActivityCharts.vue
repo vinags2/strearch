@@ -125,6 +125,7 @@ function get_active_analysis() {
                 <Column field="Speed" header="Avg Speed" sortable style="text-align: right; min-width: 100px"> </Column>
                 <Column field="AverageHR" header="Avg Heart Rate" sortable style="text-align: right; min-width: 100px"> </Column>
                 <Column field="Watts" header="Avg Watts" sortable style="text-align: right; min-width: 100px"> </Column>
+                <Column field="WeightedWatts" header="Avg Weighted Watts" sortable style="text-align: right; min-width: 100px"> </Column>
                 <Column field="Climbing" header="Avg Climbing" sortable style="text-align: right; min-width: 100px"> </Column>
                 <Column field="TotalDistance" header="Total Distance" sortable style="text-align: right; min-width: 100px"> </Column>
                 <Column field="TotalClimbing" header="Total Climbing" sortable style="text-align: right; min-width: 100px"> </Column>

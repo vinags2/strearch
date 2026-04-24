@@ -12,7 +12,7 @@ import { useStrearchData } from '@/stores/StrearchStore';
 import { storeToRefs } from 'pinia';
 
 const strearchData = useStrearchData();
-const { filters, loading: loading, activeFilter, activeFilterIndex } = storeToRefs(strearchData);
+const { filters, loading: loading, activeFilter, activeFilterIndex, timePeriod, time_periods } = storeToRefs(strearchData);
 strearchData.initFilters();
 
 const askForFilterName = ref(false);
@@ -27,6 +27,10 @@ watch(activeFilter, (newValue) => {
 
 function onChangeOfFilter() {
     strearchData.changeActiveFilter();
+}
+
+function onChangeOfTimePeriod() {
+    strearchData.setTimePeriodForActiveFilter();
 }
 
 const deleteFilter = () => {
@@ -86,6 +90,22 @@ const save_filters = () => {
                 <CircleX color="red"></CircleX>
             </Button>
         </a>
+    </div>
+    <div class="pl-4">
+        <Select
+            @change="onChangeOfTimePeriod"
+            v-model="timePeriod"
+            :loading="loading"
+            :options="time_periods"
+            optionLabel="name"
+            data-key="id"
+            placeholder="Select a time period"
+            style="background-color: #e0ffff"
+            v-tooltip.top="{
+                value: 'Select the time period for the filter. Use \'custom\' to set your own date range in the filters tab.',
+                pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' },
+            }"
+        />
     </div>
 
     <Dialog v-model:visible="askForFilterName" modal header="Filter name" :closable="false">
