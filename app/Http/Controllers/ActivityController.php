@@ -65,6 +65,7 @@ class ActivityController extends Controller
     {
         foreach ($request->input() as $activity) {
             $this->store_one_activity($activity);
+            // (new SegmentEffortController)->store();
         }
 
         (new SettingController)->saveDateOfActivitiesStore();
@@ -75,6 +76,8 @@ class ActivityController extends Controller
     public function store_activity(Activity $activity)
     {
         $this->store_one_activity(request()->all());
+
+        (new SegmentEffortController)->store();
 
         return response()->json(['status' => 'Saving was successful'], 201);
 
@@ -147,6 +150,15 @@ class ActivityController extends Controller
                 'device_name' => $activity['device_name'] ?? null,
             ]
         );
+    }
+
+    public function update_segment_efforts()
+    {
+
+        (new SegmentEffortController)->store();
+
+        return response()->json(['status' => 'Saving was successful'], 201);
+
     }
 
     /**

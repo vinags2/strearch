@@ -6,6 +6,7 @@ use App\Http\Controllers\AthleteController;
 use App\Http\Controllers\ExperimentalController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FilteredActivityController;
+use App\Http\Controllers\SegmentEffortController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\StravaController;
@@ -26,6 +27,7 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
     Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics');
     Route::get('athlete', [AthleteController::class, 'index'])->name('athlete');
     Route::get('activities', [ActivityController::class, 'index'])->name('activities');
+    Route::get('segment_efforts', [SegmentEffortController::class, 'index'])->name('segment_efforts');
     Route::get('experimental', [ExperimentalController::class, 'index'])->name('experimental');
     Route::get('profile/preferences', [SettingController::class, 'edit'])->name('preferences.edit');
     Route::patch('profile/preferences', [SettingController::class, 'update'])->name('preferences.update');
@@ -45,6 +47,7 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
     Route::get('/stats', [StatisticsController::class, 'stats'])->name('stats');
     Route::get('/athlete/get', [AthleteController::class, 'api_get'])->name('athlete.get');
     Route::get('/activities/get', [ActivityController::class, 'api_get'])->name('activities.get');
+    Route::get('/segment_efforts/update', [ActivityController::class, 'update_segment_efforts'])->name('segment_efforts.update');
     Route::get('/filters/get', [FilterController::class, 'api_get'])->name('filters.get');
     Route::get('/filter/delete/{id}', [FilterController::class, 'delete'])->name('filter.delete');
     Route::get('/filter/setactive/{id}', [FilterController::class, 'setActiveFilter'])->name('filter.setactive');

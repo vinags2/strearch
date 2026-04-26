@@ -50,6 +50,16 @@ trait Utilities
         return env('STRAVA_ACTIVITIES_URL');
     }
 
+    private function getActivityURL()
+    {
+        return env('STRAVA_ACTIVITY_URL');
+    }
+
+    private function getAuthURL()
+    {
+        return env('STRAVA_AUTH_URL');
+    }
+
     private function me()
     {
         return auth()->user();
@@ -59,6 +69,7 @@ trait Utilities
     {
         switch ($model) {
             case 'activities': return $get ? $this->me()->activities : $this->me()->activities();
+            case 'segmentEfforts': return $get ? $this->me()->segmentEfforts : $this->me()->segmentEfforts();
             case 'setting': return $get ? $this->me()->setting : $this->me()->setting();
             case 'filters': return $get ? $this->me()->filters : $this->me()->filters();
             case 'id': return $this->me()->id;
@@ -78,6 +89,18 @@ trait Utilities
         $objectValues = [];
         foreach ($sportTypes as $object) {
             $objectValues[] = $object->sport_type;
+        }
+
+        return $objectValues;
+    }
+
+    public function getDeviceNames()
+    {
+        $deviceNames = DB::table('activities')->select('device_name')->distinct()->get()->sortBy('device_name');
+
+        $objectValues = [];
+        foreach ($deviceNames as $object) {
+            $objectValues[] = $object->device_name;
         }
 
         return $objectValues;
