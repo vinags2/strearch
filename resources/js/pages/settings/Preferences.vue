@@ -10,6 +10,7 @@ import Button from 'primevue/button';
 interface Props {
     autoUpdateActivities: boolean;
     showViewInStravaAsText: boolean;
+    updateDeviceForBiketerra: boolean;
 }
 
 const props = defineProps<Props>();
@@ -17,6 +18,7 @@ const props = defineProps<Props>();
 const form = useForm({
     autoUpdateActivities: props.autoUpdateActivities,
     showViewInStravaAsText: props.showViewInStravaAsText,
+    updateDeviceForBiketerra: props.updateDeviceForBiketerra,
 });
 
 const submit = () => {
@@ -55,6 +57,17 @@ const submit = () => {
                         </div>
                         <div>
                             <InputError class="mt-2" :message="form.errors.showViewInStravaAsText" />
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-start">
+                        <div>
+                            <input id="updateDeviceForBiketerra" type="checkbox" class="mt-2" v-model="form.updateDeviceForBiketerra" />
+                        </div>
+                        <div>
+                            <label class="ml-6" for="updateDeviceForBiketerra">Update device for Biketerra</label>
+                        </div>
+                        <div>
+                            <InputError class="mt-2" :message="form.errors.updateDeviceForBiketerra" />
                         </div>
                     </div>
 

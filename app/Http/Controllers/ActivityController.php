@@ -27,6 +27,7 @@ class ActivityController extends Controller
         return Inertia::render('Activities', [
             'autoUpdateActivities' => Setting::auto_update_activities(),
             'showViewInStravaAsText' => Setting::show_viewinstrava_as_text(),
+            'updateDeviceForBiketerra' => Setting::update_device_for_biketerra(),
         ]);
 
     }

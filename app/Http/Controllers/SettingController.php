@@ -21,6 +21,7 @@ class SettingController extends Controller
         return Inertia::render('settings/Preferences', [
             'autoUpdateActivities' => Setting::auto_update_activities(),
             'showViewInStravaAsText' => Setting::show_viewinstrava_as_text(),
+            'updateDeviceForBiketerra' => Setting::update_device_for_biketerra(),
         ]);
     }
 
@@ -64,6 +65,7 @@ class SettingController extends Controller
         return Inertia::render('settings/Preferences', [
             'autoUpdateActivities' => Setting::auto_update_activities(),
             'showViewInStravaAsText' => Setting::show_viewinstrava_as_text(),
+            'updateDeviceForBiketerra' => Setting::update_device_for_biketerra(),
         ]);
     }
 
@@ -77,7 +79,8 @@ class SettingController extends Controller
         Setting::updateOrCreate(
             ['user_id' => $this->my('id')],
             ['auto_update_activities' => $request->input('autoUpdateActivities'),
-                'show_viewinstrava_as_text' => $request->input('showViewInStravaAsText')]
+                'show_viewinstrava_as_text' => $request->input('showViewInStravaAsText'),
+                'update_device_for_biketerra' => $request->input('updateDeviceForBiketerra')]
         );
 
         //

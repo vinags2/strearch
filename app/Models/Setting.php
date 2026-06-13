@@ -22,6 +22,7 @@ class Setting extends Model
             'analysis_id' => 'array',
             'auto_update_activities' => 'boolean',
             'show_viewinstrava_as_text' => 'boolean',
+            'update_device_for_biketerra' => 'boolean',
         ];
     }
 
@@ -87,6 +88,11 @@ class Setting extends Model
     public static function show_viewinstrava_as_text()
     {
         return Setting::first('show_viewinstrava_as_text')?->show_viewinstrava_as_text;
+    }
+
+    public static function update_device_for_biketerra()
+    {
+        return Setting::first('update_device_for_biketerra')?->update_device_for_biketerra;
     }
 
     public static function auto_update_activities()
