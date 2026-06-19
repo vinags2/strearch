@@ -86,6 +86,8 @@ class ActivityController extends Controller
 
     private function store_one_activity($activity)
     {
+        $activity = $this->preProcessActivity($activity);
+
         $r = Activity::updateOrCreate(
             ['id' => $activity['id']],
             [
@@ -151,6 +153,42 @@ class ActivityController extends Controller
                 'device_name' => $activity['device_name'] ?? null,
             ]
         );
+    }
+
+    private function preProcessActivity($activity)
+    {
+        return $this->processBiketerraActivity($activity);
+    }
+
+    private function processBiketerraActivity($activity)
+    {
+        if (Setting::update_device_for_biketerra() === false) {
+
+            return $activity;
+        }
+
+        $activity = $this->add_device_name_to_biketerra_activity($activity);
+        $activity = $this->remove_biketerra_from_title($activity);
+
+        return $activity;
+    }
+
+    private function add_device_name_to_biketerra_activity($activity)
+    {
+        if ($activity['external_id'] === 'blob.fit') {
+            $activity['device_name'] = 'Biketerra';
+        }
+
+        return $activity;
+    }
+
+    private function remove_biketerra_from_title($activity)
+    {
+        if (str_contains($activity['name'], 'Biketerra - ')) {
+            $activity['name'] = str_replace('Biketerra - ', '', $activity['name']);
+        }
+
+        return $activity;
     }
 
     public function update_segment_efforts()
