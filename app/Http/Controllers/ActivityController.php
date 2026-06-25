@@ -262,4 +262,15 @@ class ActivityController extends Controller
             201
         );
     }
+
+    public function api_segment_efforts_get($activity_id)
+    {
+        $segment_efforts = (new SegmentEffortController)->getSegmentEffortsForActivity($activity_id);
+
+        return response()->json([
+            'segment_efforts' => $segment_efforts ?? false,
+        ],
+            201
+        );
+    }
 }

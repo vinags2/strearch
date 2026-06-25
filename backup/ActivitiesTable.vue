@@ -2,7 +2,6 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
-import SegmentsTable from '@/components/my/SegmentsTable.vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
@@ -83,7 +82,6 @@ const strearchData = useStrearchData();
 const { activities, sportTypes, deviceNames, loading: loading, lastUpdate, justTheFilter } = storeToRefs(useStrearchData());
 
 strearchData.initActivities();
-console.log('activities = ', activities);
 
 function get_activities() {
     autoUpdateComplete.value = true;
@@ -107,33 +105,17 @@ const formatDate = (value: Date) => {
     });
 };
 
-const formatTime = (value: Date) => {
-    return value.toLocaleTimeString('en-AU', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
-
 const viewInStravaHeader = computed(() => (props.showViewInStravaAsText ? '' : 'View on Strava'));
 const currentTitle = ref('an activity');
 const currentId = ref(0);
 // const showAlert = ref(false);
 const alertIsVisible = ref(false);
-const segmentTableIsVisible = ref(false);
 function showAlert(title: string, id: number) {
     currentTitle.value = title;
     currentId.value = id;
     deletionFailed.value = false;
     deletionSucceeded.value = false;
     alertIsVisible.value = true;
-    return true;
-}
-function showSegmentTable(activity) {
-    console.log(activity, activity.name, activity.id);
-    currentTitle.value =
-        'Segments for "' + activity.name + '" on ' + formatDate(activity.start_date_local) + ' at ' + formatTime(activity.start_date_local);
-    currentId.value = activity.id;
-    segmentTableIsVisible.value = true;
     return true;
 }
 const dt = ref();
@@ -229,7 +211,7 @@ function changeDateFilter() {
                             pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' },
                         }"
                     >
-                        <a @click="showSegmentTable(data)" style="background-color: transparent; border: none" class="cursor-pointer">
+                        <a @click="showAlert(data.name, data.id)" style="background-color: transparent; border: none" class="cursor-pointer">
                             <BadgePlus color="blue" stroke-width="1" :size="20"></BadgePlus>
                         </a>
                     </div>
@@ -445,7 +427,7 @@ function changeDateFilter() {
             </div>
         </template>
     </DataTable>
-    <Dialog v-model:visible="alertIsVisible" modal :closable="false" header="Edit Activity" style="background-color: #f0f8ff">
+    <Dialog v-model:visible="alertIsVisible" :closable="false" header="Edit Activity">
         <div v-if="deletionSucceeded">
             <div class="mt-2" v-if="reDownloadOccurred">The re-download of the activity:</div>
             <div class="mt-2" v-else>The deletion of the activity:</div>
@@ -473,19 +455,6 @@ function changeDateFilter() {
                     >Delete</Button
                 >
             </form>
-        </div>
-    </Dialog>
-    <Dialog
-        v-model:visible="segmentTableIsVisible"
-        modal
-        :closable="false"
-        style="background-color: #f0f8ff; width: 90%; max-width: 1200px"
-        :header="currentTitle"
-        :contentStyle="{ overflow: 'visible' }"
-    >
-        <SegmentsTable :activityId="currentId" :activityTitle="currentTitle"></SegmentsTable>
-        <div class="justify-left flex flex-row items-center pb-1 pt-2">
-            <Button @click="segmentTableIsVisible = false" size="small" severity="info">Close</Button>
         </div>
     </Dialog>
 </template>

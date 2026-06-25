@@ -17,6 +17,7 @@ import axios from 'axios';
 // 18 = Filter deleted from the DB
 // 22 = Chart Data uploaded from Laravel
 // 23 = All activities downloaded from Strava
+// 24 = Segment Efforts for an activity have been uploaded from the DB
 
 // (do not) show debug messages in the console
 export let debug = true;
@@ -32,6 +33,8 @@ export const whatWeAreDownloading = (flag: number = 0) => {
             return 'Activities';
         case 23:
             return 'All activities';
+        case 24:
+            return 'Segment Efforts';
         default:
             return 'Unknown';
     }
@@ -72,6 +75,8 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
                 return 'There was an error deleting a filter from Laravel.';
             case 22:
                 return 'There was an error uploading the Chart data from Laravel.';
+            case 24:
+                return 'There was an error retrieving the Segment Efforts data from Laravel.';
             default:
                 return 'There was an error downloading the data.';
         }
@@ -108,6 +113,8 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
                 return 'A filter has been deleted from Laravel.';
             case 22:
                 return 'The Chart data has been uploaded from Laravel successfully.';
+            case 24:
+                return 'Segment Efforts data from Laravel retrieved successfully.';
             default:
                 return 'An unknown flag was returned.(' + flag + ')';
         }

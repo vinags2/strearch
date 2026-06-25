@@ -47,6 +47,8 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
     Route::get('/stats', [StatisticsController::class, 'stats'])->name('stats');
     Route::get('/athlete/get', [AthleteController::class, 'api_get'])->name('athlete.get');
     Route::get('/activities/get', [ActivityController::class, 'api_get'])->name('activities.get');
+    Route::get('/activity/segment_efforts/get/{activity_id}', [ActivityController::class, 'api_segment_efforts_get'])->name('activity.segment_efforts.get');
+    Route::get('/segment_efforts/get', [SegmentEffortController::class, 'api_get'])->name('segment_efforts.get');
     Route::get('/segment_efforts/update', [ActivityController::class, 'update_segment_efforts'])->name('segment_efforts.update');
     Route::get('/filters/get', [FilterController::class, 'api_get'])->name('filters.get');
     Route::get('/filter/delete/{id}', [FilterController::class, 'delete'])->name('filter.delete');

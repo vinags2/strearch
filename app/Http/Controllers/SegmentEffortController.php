@@ -150,6 +150,13 @@ class SegmentEffortController extends Controller
 
     }
 
+    public function getSegmentEffortsForActivity($activity_id)
+    {
+        $segment_efforts = $this->my('segment_efforts', false)->where('activity_id', $activity_id)->orderBy('start_date_local');
+
+        return $segment_efforts->get();
+    }
+
     public function api_get()
     {
         $segment_efforts = $this->getSegmentEfforts();

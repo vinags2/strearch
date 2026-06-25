@@ -31,7 +31,7 @@ type Filter = {
     name: object;
     sport_type: object;
     start_date_local: object;
-    start_date_local_as_timestamp: object;
+    start_date_as_timestamp: object;
     suffer_score: object;
     total_elevation_gain: object;
     device_name: object;
@@ -60,15 +60,34 @@ type Activity = {
     name: string;
     sport_type: string;
     start_date_local: Date;
-    start_date_local_as_timestamp: number;
+    start_date_as_timestamp: number;
     suffer_score: number;
     total_elevation_gain: number;
     device_name: object;
 };
 
+type SegmentEffort = {
+    id: number;
+    activity_id: number;
+    segment_id: number;
+    name: string;
+    moving_time: number;
+    start_date_local: Date;
+    start_date_as_timestamp: number;
+    average_cadence: number;
+    average_watts: number;
+    average_heartrate: number;
+    max_heartrate: number;
+    kom_rank: number;
+    pr_rank: number;
+    average_speed: number;
+    distance: number;
+};
+
 export const useStrearchData = defineStore('strearchData', {
     state: () => ({
         activities: <Activity[]>[],
+        segmentEfforts: <SegmentEffort[]>[],
         sportTypes: <string>{},
         deviceNames: <string>{},
         lastUpdate: <string>'',
@@ -139,7 +158,7 @@ export const useStrearchData = defineStore('strearchData', {
         // Convert dates as strings (from DB) to JS Date objects
         stringToDate() {
             for (const element of this.activities) {
-                element.start_date_local = new Date(element.start_date_local_as_timestamp);
+                element.start_date_local = new Date(element.start_date_as_timestamp);
             }
         },
 
@@ -370,6 +389,12 @@ export const useStrearchData = defineStore('strearchData', {
             this.deleteFilterFromFiltersArray();
             this.deleteFilterActually(id);
         },
+
+        // Get the segments efforts for an activity
+        async getSegmentEffortsForActivity(activityId: number) {
+            const ret = await async_axios({ url: route('activity.segment_efforts.get', activityId), flag: 24 });
+            this.segmentEfforts = ret.data.segment_efforts;
+        },
     },
 
     getters: {
@@ -388,7 +413,7 @@ export const useStrearchData = defineStore('strearchData', {
             return {
                 name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
                 start_date_local: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-                start_date_local_as_timestamp: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+                start_date_as_timestamp: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
                 sport_type: { value: null, matchMode: FilterMatchMode.IN },
                 distance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
                 average_speed: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },

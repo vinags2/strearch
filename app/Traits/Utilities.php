@@ -69,7 +69,7 @@ trait Utilities
     {
         switch ($model) {
             case 'activities': return $get ? $this->me()->activities : $this->me()->activities();
-            case 'segmentEfforts': return $get ? $this->me()->segmentEfforts : $this->me()->segmentEfforts();
+            case 'segment_efforts': return $get ? $this->me()->segment_efforts : $this->me()->segment_efforts();
             case 'setting': return $get ? $this->me()->setting : $this->me()->setting();
             case 'filters': return $get ? $this->me()->filters : $this->me()->filters();
             case 'id': return $this->me()->id;

@@ -20,7 +20,7 @@ class Activity extends Model
 
     protected $guarded = [];
 
-    protected $appends = ['moving_time_as_string', 'start_date_local_as_timestamp'];
+    protected $appends = ['moving_time_as_string', 'start_date_as_timestamp'];
 
     protected $hidden = ['resource_state', 'user_id', 'athlete_id', 'athlete_resource_state', 'elapsed_time', 'type',
         'workout_type', 'start_date', 'timezone', 'UTC_offset', 'location_city', 'location_state', 'location_country', 'achievement_count',

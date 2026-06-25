@@ -20,13 +20,6 @@ trait CommonModelFunctions
         static::addGlobalScope(new MyScope);
     }
 
-    protected function startDateLocal(): Attribute
-    {
-        return Attribute::make(
-            get: fn (?string $value) => $dt = Carbon::parse($value)->format('D j M Y'),
-        );
-    }
-
     protected function averageCadence(): Attribute
     {
         return Attribute::make(
@@ -90,11 +83,20 @@ trait CommonModelFunctions
         return $hDisplay.':'.$mDisplay.':'.$sDisplay;
     }
 
-    public function startDateLocalAsTimestamp(): Attribute
+    public function getStartDateAsTimestampAttribute()
     {
-        return Attribute::make(
-            get: fn ($value) => strtotime(str_replace('/', '-', $this->start_date_local)) * 1000, // - 12 * 60 * 60
-        );
+        // return $this->getOriginal('start_date_local'); // - 12 * 60 * 60
+        return strtotime(str_replace('/', '-', $this->getOriginal('start_date'))) * 1000; // - 12 * 60 * 60
 
+    }
+
+    public function getFormattedStartDateLocalAttribute()
+    {
+        return Carbon::parse($this->start_date_local)->format('D j M Y');
+    }
+
+    public function getStartTimeAttribute()
+    {
+        return Carbon::parse($this->start_date_local)->format('H:i:s');
     }
 }
