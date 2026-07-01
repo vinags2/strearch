@@ -22,8 +22,26 @@ class GetDataFromStravaController extends Controller
         $ret = Http::get($full_url);
         // dd($ret->failed(), $ret);
         $retJson = $ret->json();
+
         // dd($retJson);
-        dd($retJson['segment_efforts'], $retJson['segment_efforts'][1]['name'], $retJson);
+        return $retJson;
+
+    }
+
+    public function getASegment($segment_id)
+    {
+        $this->access_token = $this->getAccessToken();
+        $this->authoriseWithStrava();
+
+        $segment_url = $this->getSegmentURL();
+        $full_url = $segment_url.'/'.$segment_id.'?access_token='.$this->access_token;
+
+        $ret = Http::get($full_url);
+        // dd($ret->failed(), $ret);
+        $retJson = $ret->json();
+
+        // dd($retJson, $retJson['average_grade']);
+        return $retJson;
 
     }
 

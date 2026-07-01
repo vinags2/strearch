@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SegmentEffort;
 use App\Models\Setting;
 use App\Traits\Utilities;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -57,15 +58,20 @@ class SegmentEffortController extends Controller
     /**
      * Store an array of segment_efforts from an API call
      */
-    public function store()
+    public function store($activity = null)
     {
-        $request = request();
-        $segment_efforts = $request->input('segment_efforts' ?? []);
+        $segment_efforts = [];
+        $segment_efforts = $activity ? $activity['segment_efforts'] : request()->input('segment_efforts' ?? []);
+        // TODO: remove logging after testing
+        Log::channel('gsv')->info('$activity = ');
+        Log::channel('gsv')->info($activity);
+        Log::channel('gsv')->info('$segment_efforts = ');
+        Log::channel('gsv')->info($segment_efforts);
         foreach ($segment_efforts as $segment_effort) {
             $this->store_one_segment_effort($segment_effort);
         }
 
-        // return response()->json(['status' => 'Saving was successful'], 201);
+        return response()->json(['status' => 'Saving was successful'], 201);
     }
 
     public function store_segment_effort(SegmentEffort $segment_effort)
@@ -109,6 +115,9 @@ class SegmentEffortController extends Controller
                 'climb_category' => $segment_effort['climb_category'] ?? null,
             ]
         );
+
+        (new SegmentController)->store_one_segment($segment_effort['segment']['id']);
+
     }
 
     /**
@@ -155,6 +164,17 @@ class SegmentEffortController extends Controller
         $segment_efforts = $this->my('segment_efforts', false)->where('activity_id', $activity_id)->orderBy('start_date_local');
 
         return $segment_efforts->get();
+    }
+
+    public function getAllEffortsForASegment($segment_id)
+    {
+        $segment_efforts = $this->my('segment_efforts', false)->where('segment_id', $segment_id)->orderBy('start_date_local', 'desc');
+
+        return response()->json([
+            'segment_efforts' => $segment_efforts->get(),
+        ],
+            201
+        );
     }
 
     public function api_get()

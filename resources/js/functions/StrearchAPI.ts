@@ -33,3 +33,7 @@ export async function save_activities(activities: any, filtered_activities: bool
 export async function update_segment_efforts() {
     return await async_axios({ url: route('segment_efforts.update'), flag: 15 });
 }
+
+export async function log($data: any) {
+    return await async_axios({ url: route('log', $data), flag: 26 });
+}

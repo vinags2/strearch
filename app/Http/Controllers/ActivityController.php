@@ -66,7 +66,8 @@ class ActivityController extends Controller
     {
         foreach ($request->input() as $activity) {
             $this->store_one_activity($activity);
-            // (new SegmentEffortController)->store();
+            $activity = (new getDataFromStravaController)->getAnActivity($activity['id']);
+            (new SegmentEffortController)->store($activity);
         }
 
         (new SettingController)->saveDateOfActivitiesStore();
@@ -76,6 +77,7 @@ class ActivityController extends Controller
 
     public function store_activity(Activity $activity)
     {
+
         $this->store_one_activity(request()->all());
 
         (new SegmentEffortController)->store();
@@ -263,7 +265,7 @@ class ActivityController extends Controller
         );
     }
 
-    public function api_segment_efforts_get($activity_id)
+    public function api_segment_efforts_for_an_activity_get($activity_id)
     {
         $segment_efforts = (new SegmentEffortController)->getSegmentEffortsForActivity($activity_id);
 

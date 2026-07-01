@@ -6,6 +6,8 @@ use App\Http\Controllers\AthleteController;
 use App\Http\Controllers\ExperimentalController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FilteredActivityController;
+use App\Http\Controllers\GetDataFromStravaController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\SegmentEffortController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StatisticsController;
@@ -21,7 +23,7 @@ Route::inertia('/', 'Welcome')->name('home');
 
 Route::inertia('notRegistered', 'NotRegistered')->name('notRegistered');
 
-Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function () {
+Route::middleware(['auth', 'verified', 'registeredWithStrava'])->group(function () {
     Route::get('/dashboard', [ActivityController::class, 'index'])->name('dashboard');
 
     Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics');
@@ -47,13 +49,16 @@ Route::middleware('auth', 'verified', 'registeredWithStrava')->group(function ()
     Route::get('/stats', [StatisticsController::class, 'stats'])->name('stats');
     Route::get('/athlete/get', [AthleteController::class, 'api_get'])->name('athlete.get');
     Route::get('/activities/get', [ActivityController::class, 'api_get'])->name('activities.get');
-    Route::get('/activity/segment_efforts/get/{activity_id}', [ActivityController::class, 'api_segment_efforts_get'])->name('activity.segment_efforts.get');
+    Route::get('/activity/segment_efforts/get/{activity_id}', [ActivityController::class, 'api_segment_efforts_for_an_activity_get'])->name('activity.segment_efforts.get');
+    Route::get('/segment/get/{id}', [GetDataFromStravaController::class, 'getASegment'])->name('segment.get');
     Route::get('/segment_efforts/get', [SegmentEffortController::class, 'api_get'])->name('segment_efforts.get');
+    Route::get('/segment_efforts/segment/get/{id}', [SegmentEffortController::class, 'getAllEffortsForASegment'])->name('segment_efforts.segment.get');
     Route::get('/segment_efforts/update', [ActivityController::class, 'update_segment_efforts'])->name('segment_efforts.update');
     Route::get('/filters/get', [FilterController::class, 'api_get'])->name('filters.get');
     Route::get('/filter/delete/{id}', [FilterController::class, 'delete'])->name('filter.delete');
     Route::get('/filter/setactive/{id}', [FilterController::class, 'setActiveFilter'])->name('filter.setactive');
     Route::get('/chartdata/get', [AnalysisController::class, 'api_get'])->name('chartData.get');
+    Route::get('/log/{data}', [LogController::class, 'api_log'])->name('log');
 
     // API routes to delete data
     Route::delete('/activity/delete/{activity}', [ActivityController::class, 'destroy'])->name('activity.delete');

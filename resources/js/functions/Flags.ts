@@ -18,6 +18,7 @@ import axios from 'axios';
 // 22 = Chart Data uploaded from Laravel
 // 23 = All activities downloaded from Strava
 // 24 = Segment Efforts for an activity have been uploaded from the DB
+// 26 = Data has been logged in Laravel
 
 // (do not) show debug messages in the console
 export let debug = true;
@@ -34,7 +35,9 @@ export const whatWeAreDownloading = (flag: number = 0) => {
         case 23:
             return 'All activities';
         case 24:
-            return 'Segment Efforts';
+            return 'Segment Efforts for an activity';
+        case 25:
+            return 'All Efforts for a segment';
         default:
             return 'Unknown';
     }
@@ -76,7 +79,11 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
             case 22:
                 return 'There was an error uploading the Chart data from Laravel.';
             case 24:
-                return 'There was an error retrieving the Segment Efforts data from Laravel.';
+                return 'There was an error retrieving the Segment Efforts for an Activity from Laravel.';
+            case 25:
+                return 'There was an error retrieving All Efforts for a Segment from Laravel.';
+            case 26:
+                return 'There was an error logging to Laravel.';
             default:
                 return 'There was an error downloading the data.';
         }
@@ -114,7 +121,11 @@ export const error_message = (flag: number = 0, error: boolean = false) => {
             case 22:
                 return 'The Chart data has been uploaded from Laravel successfully.';
             case 24:
-                return 'Segment Efforts data from Laravel retrieved successfully.';
+                return 'Segment Efforts for an Activity from Laravel retrieved successfully.';
+            case 25:
+                return 'All Efforts for a Segment from Laravel retrieved successfully.';
+            case 26:
+                return 'Logging to Laravel was successful.';
             default:
                 return 'An unknown flag was returned.(' + flag + ')';
         }

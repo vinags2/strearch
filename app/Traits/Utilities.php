@@ -45,6 +45,11 @@ trait Utilities
         return env('STRAVA_ATHLETE_URL');
     }
 
+    private function getSegmentURL()
+    {
+        return env('STRAVA_SEGMENT_URL');
+    }
+
     private function getActivitiesURL()
     {
         return env('STRAVA_ACTIVITIES_URL');

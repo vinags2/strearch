@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ErrorNotification;
 use App\Models\Setting;
 use App\Models\Strava;
 use App\Traits\Utilities;
@@ -54,7 +55,7 @@ class StravaController extends Controller
      */
     public function authorization_stage2(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
 
         return response()->json(['expires at' => $request->input('expires_at'), 'all' => $request->all()], 201);
     }
@@ -121,7 +122,7 @@ class StravaController extends Controller
     public function sendErrorNotification(Request $request)
     {
         Mail::to(env('MAIL_TO_FOR_ERRORS', 'retired@gregvinall.com'))
-            ->send(new \App\Mail\ErrorNotification(
+            ->send(new ErrorNotification(
                 $request->input('flag'),
                 $request->input('error_code'),
                 is_array($request->input('error_response')) ? implode(', ', $request->input('error_response')) : $request->input('error_response'),

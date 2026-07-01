@@ -395,6 +395,12 @@ export const useStrearchData = defineStore('strearchData', {
             const ret = await async_axios({ url: route('activity.segment_efforts.get', activityId), flag: 24 });
             this.segmentEfforts = ret.data.segment_efforts;
         },
+
+        // Get all efforts for a segment
+        async getAllEffortsForASegment(segmentId: number) {
+            const ret = await async_axios({ url: route('segment_efforts.segment.get', segmentId), flag: 25 });
+            this.segmentEfforts = ret.data.segment_efforts;
+        },
     },
 
     getters: {

@@ -2,6 +2,7 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
+import ActivityDetails from '@/components/my/ActivityDetails.vue';
 import SegmentsTable from '@/components/my/SegmentsTable.vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import Button from 'primevue/button';
@@ -83,7 +84,6 @@ const strearchData = useStrearchData();
 const { activities, sportTypes, deviceNames, loading: loading, lastUpdate, justTheFilter } = storeToRefs(useStrearchData());
 
 strearchData.initActivities();
-console.log('activities = ', activities);
 
 function get_activities() {
     autoUpdateComplete.value = true;
@@ -117,6 +117,7 @@ const formatTime = (value: Date) => {
 const viewInStravaHeader = computed(() => (props.showViewInStravaAsText ? '' : 'View on Strava'));
 const currentTitle = ref('an activity');
 const currentId = ref(0);
+const currentActivity = ref(0);
 // const showAlert = ref(false);
 const alertIsVisible = ref(false);
 const segmentTableIsVisible = ref(false);
@@ -129,10 +130,10 @@ function showAlert(title: string, id: number) {
     return true;
 }
 function showSegmentTable(activity) {
-    console.log(activity, activity.name, activity.id);
     currentTitle.value =
         'Segments for "' + activity.name + '" on ' + formatDate(activity.start_date_local) + ' at ' + formatTime(activity.start_date_local);
     currentId.value = activity.id;
+    currentActivity.value = activity;
     segmentTableIsVisible.value = true;
     return true;
 }
@@ -225,7 +226,7 @@ function changeDateFilter() {
                     <div
                         class="ml-4"
                         v-tooltip.top="{
-                            value: 'Details',
+                            value: 'Segments and Details',
                             pt: { text: '!bg-secondary !text-primary !font-medium !text-sm' },
                         }"
                     >
@@ -478,12 +479,12 @@ function changeDateFilter() {
     <Dialog
         v-model:visible="segmentTableIsVisible"
         modal
-        :closable="false"
+        :closable="true"
+        :showHeader="false"
         style="background-color: #f0f8ff; width: 90%; max-width: 1200px"
-        :header="currentTitle"
-        :contentStyle="{ overflow: 'visible' }"
     >
-        <SegmentsTable :activityId="currentId" :activityTitle="currentTitle"></SegmentsTable>
+        <ActivityDetails :activity="currentActivity"></ActivityDetails>
+        <SegmentsTable :activityId="currentId" activityTitle="Current Activity's Segments"></SegmentsTable>
         <div class="justify-left flex flex-row items-center pb-1 pt-2">
             <Button @click="segmentTableIsVisible = false" size="small" severity="info">Close</Button>
         </div>
